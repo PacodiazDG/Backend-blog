@@ -1,0 +1,49 @@
+#Full url connect of database mongodb
+DB_CONFIG=mongodb+srv://Blog:Passexample@example.com/Blog?retryWrites=true&w=majority
+
+#JWT Secret default rand 
+JWT_SECRET=Passexamle
+TokenExpirationTimeInMinutes=20160
+
+#Database name 
+DefaultDatabase=Blog
+
+# Url your site
+Siteurl=http://localhost:8080/
+
+# Url your second site, This is useful when you have two separate backend.
+SecondSite=https://example.com
+
+# Url your site
+Cross=*
+
+# Enable Critical report error logs
+LogErr=false
+
+# Lisent
+Port=:8080
+
+# SMTP credencials
+SMTPHost=example.example.com
+SMTPport=587
+SMTPUsername=example@example.com
+SMTPPassword=Passexample
+TestSMTP=false
+UseSMTP=false
+
+# Redis credencials
+RedisAddr=example.com:10359
+RedisPassword=example
+
+# SSL 
+PemFile=selfsigned.crt
+KeyFile=selfsigned.key
+
+# ReleaseMode 
+ginReleaseMode=false
+
+# Name of the header that will be used to obtain the IP, if you are not going to use any, leave it empty 
+IpaddressByHeader=
+
+# recaptcha Secret
+Rsecret=

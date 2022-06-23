@@ -1,0 +1,5 @@
+package Mail
+
+func InitMail() {
+
+}
