@@ -34,7 +34,6 @@ func XCheckpermissions(Permissions string, Need []rune) bool {
 }
 
 func ValidationPermissions(Permissions string) bool {
-	println(!validation.IsvalidNormalstring(Permissions))
 	if len(Permissions) > 9 || !validation.IsvalidNormalstring(Permissions) {
 		return false
 	}

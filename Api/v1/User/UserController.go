@@ -178,7 +178,8 @@ func Updateinfo(c *gin.Context) {
 		}
 		result.Password = string(hashedPassword)
 	}
-	Info := UserStrcture{
+	//
+	result = UserStrcture{
 		Username:  result.Username,
 		Password:  result.Password,
 		FirstName: result.FirstName,
@@ -191,7 +192,7 @@ func Updateinfo(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "ID type no valid."})
 		return
 	}
-	_, err = UpdateUserInfo(IDuser, &Info)
+	_, err = UpdateUserInfo(IDuser, &result)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 			"Status": err.Error(),

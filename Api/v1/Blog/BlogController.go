@@ -59,10 +59,7 @@ func (v *PostController) InsertPost(c *gin.Context) {
 	}
 	re := regexp.MustCompile(`([A-Fa-f0-9]{128}(.jpg|.jpeg|.png|.gif))`)
 	matches := re.FindAllString(result.Content, -1)
-	for _, v := range matches {
-		println(v)
-	}
-	ProcessData := PostSimpleStruct{
+	result = PostSimpleStruct{
 		Title:         result.Title,
 		Content:       result.Content,
 		Tags:          result.Tags,
@@ -75,7 +72,7 @@ func (v *PostController) InsertPost(c *gin.Context) {
 		Views:         0,
 		UrlImageFound: matches,
 	}
-	Status, err := v.Model.ModelInsertPost(&ProcessData)
+	Status, err := v.Model.ModelInsertPost(&result)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"Status:": "Error",
@@ -285,18 +282,17 @@ func (v *PostController) UpdatePost(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid ObjectId")
 		return
 	}
-	ProcessData := PostSimpleStruct{
+	result = PostSimpleStruct{
 		Title:       result.Title,
 		Content:     result.Content,
 		Tags:        result.Tags,
-		Date:        time.Now(),
 		Author:      jwtinfo["Userid"].(string),
 		Visible:     result.Visible,
 		Imagen:      result.Imagen,
 		Password:    result.Password,
 		Description: validation.TruncateString((result.Description), 139),
 	}
-	_, err = v.Model.ModelUpdate(&ProcessData, PostID)
+	_, err = v.Model.ModelUpdate(&result, PostID)
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}
@@ -311,7 +307,7 @@ func (v *PostController) Initialize(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"": ""})
 		return
 	}
-	ProcessData := PostSimpleStruct{
+	Initialize := PostSimpleStruct{
 		Title:       "New post" + time.Now().GoString(),
 		Content:     "write your content here",
 		Tags:        []string{"Example"},
@@ -322,7 +318,7 @@ func (v *PostController) Initialize(c *gin.Context) {
 		Description: "write your description here",
 		Views:       0,
 	}
-	Infomodel, err := v.Model.ModelInsertPost(&ProcessData)
+	Infomodel, err := v.Model.ModelInsertPost(&Initialize)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"Status:": "Error",
