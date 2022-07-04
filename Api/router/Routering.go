@@ -15,13 +15,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func test(c *gin.Context) {
-	val, err := database.RedisCon.Get("key").Result()
-	if err != nil {
-		panic(err)
-	}
-	c.XML(http.StatusOK, gin.H{"message": val, "status": http.StatusOK})
-}
 func index(c *gin.Context) {
 	c.HTML(http.StatusOK, "Index.tmpl", gin.H{
 		"title": "Ok",
@@ -121,7 +114,6 @@ func MercyRouter(router *gin.Engine) {
 			Adminsite.POST("/BanToken", User.Updateinfo)     //2/3/22
 			Adminsite.GET("/Ban/:UserID", admin.BanUser)     //2/3/22
 			Adminsite.GET("/Unban/:UserID", admin.UnbanUser) //2/3/22
-			Adminsite.POST("/PrivilegeElevation", test)      //2/3/22
 			Adminsite.GET("/Cacherefresh", admin.ManualUpdateFeed)
 			Adminsite.POST("/UserManagement", admin.UserManagement)  //2/3/22
 			Adminsite.GET("/DumpUsers", admin.ListUsers)             //2/3/22
