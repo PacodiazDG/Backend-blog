@@ -11,7 +11,6 @@ import (
 //ValidadteEmailArray verifica
 func ValidadteEmailArray(email []string) bool {
 	for _, value := range email {
-		println(value)
 		if !validation.IsValidEmail(value) {
 			return false
 		}
