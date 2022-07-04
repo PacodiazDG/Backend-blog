@@ -1,4 +1,4 @@
-module github.com/PacodiazDG/Backend-blog/
+module github.com/PacodiazDG/Backend-blog
 
 go 1.15
 
