@@ -10,7 +10,6 @@ import (
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Sitemap"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/User"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/cachehash"
-	database "github.com/PacodiazDG/Backend-blog/Database"
 	"github.com/PacodiazDG/Backend-blog/Middlewares"
 	"github.com/gin-gonic/gin"
 )
@@ -28,7 +27,6 @@ func MercyRouter(router *gin.Engine) {
 	router.GET("/Image/blog/:ImageName", mods.ImageController)
 	//Decrapped <=1
 	router.Static("/assets/", "./Serverfiles")
-
 	router.LoadHTMLGlob("Templates/www/*")
 	router.HEAD("/ping", func(c *gin.Context) {
 		c.Status(http.StatusOK)
