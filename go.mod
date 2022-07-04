@@ -28,7 +28,6 @@ require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/onsi/gomega v1.19.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.2 // indirect
-	github.com/ugorji/go v1.2.7 // indirect
 	github.com/xdg-go/scram v1.1.1 // indirect
 	golang.org/x/net v0.0.0-20220622184535-263ec571b305 // indirect
 )
