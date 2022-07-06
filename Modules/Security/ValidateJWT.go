@@ -1,11 +1,13 @@
 package Security
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/PacodiazDG/Backend-blog/Extensions/RedisMercy"
 	"github.com/golang-jwt/jwt"
 )
 
@@ -29,7 +31,7 @@ func GetinfoToken(tokenStr string) (jwt.MapClaims, error) {
 	return token.Claims.(jwt.MapClaims), nil
 }
 
-//VerifyToken Esto verifica que el token sea valido a partir del cifrado de jwt de lo contrario regresa un error
+//VerifyToken Esto verifica que el token sea valido a partir Request
 func VerifyToken(r *http.Request) (*jwt.Token, error) {
 	token, err := jwt.Parse(ExtractToken(r), func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -40,7 +42,10 @@ func VerifyToken(r *http.Request) (*jwt.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	TokenInfo := token.Claims.(jwt.MapClaims)
+	if RedisMercy.CheckBan(TokenInfo["Userid"].(string), TokenInfo["idtoken"].(string)) {
+		return nil, errors.New("token banned")
+	}
 	return token, nil
 }
 
