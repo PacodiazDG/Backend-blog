@@ -19,7 +19,7 @@ var CacheRamPost *[]PostSimpleStruct
 
 //TokenBlackList gets if the token is blacklisted from some database
 func TokenBlackList(token, idtoken string) bool {
-	return RedisMercy.MidelwareBan(token, idtoken)
+	return RedisMercy.CheckBan(token, idtoken)
 }
 
 // Actualizar el top de los post mas vistos

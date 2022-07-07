@@ -6,7 +6,7 @@ import (
 )
 
 // InsertFeedCache Get if any token is banned
-func MidelwareBan(id, idtoken string) bool {
+func CheckBan(id, idtoken string) bool {
 	_, err := database.RedisCon.Get("IDBaned" + id).Result()
 	if err != redis.Nil {
 		return true
