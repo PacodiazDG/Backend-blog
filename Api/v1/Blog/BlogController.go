@@ -103,26 +103,23 @@ func (v *PostController) FindPost(c *gin.Context) {
 			return
 		}
 	}
-	TargetQuery := "Title"
 	err = Security.TokenValid(c.Request)
-	query = bson.M{TargetQuery: bson.M{"$regex": primitive.Regex{Pattern: ".*" + search + ".*", Options: "gi"}}}
 	var visibility bool = true
 	if err == nil {
 		visibility = false
 	}
-	query["Visible"] = visibility
+	query = bson.M{"Title": bson.M{"$regex": primitive.Regex{Pattern: ".*" + search + ".*", Options: "gi"}}, "Visible": visibility, "Password": ""}
 	Feed1, err := v.Model.GetFeed(next, query)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
+		panic(err)
 		return
 	}
-
-	TargetQuery = "Description"
-	query = bson.M{TargetQuery: bson.M{"$regex": primitive.Regex{Pattern: ".*" + search + ".*", Options: "gi"}}}
-	query["Visible"] = visibility
+	query = bson.M{"Description": bson.M{"$regex": primitive.Regex{Pattern: ".*" + search + ".*", Options: "gi"}}, "Visible": visibility, "Password": ""}
 	Feed2, err := v.Model.GetFeed(next, query)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
+		panic(err)
 		return
 	}
 	Feed1 = append(Feed1, Feed2...)
