@@ -6,7 +6,6 @@ import (
 	admin "github.com/PacodiazDG/Backend-blog/Api/v1/Admin"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Blog"
 	mods "github.com/PacodiazDG/Backend-blog/Api/v1/Mods"
-	notebook "github.com/PacodiazDG/Backend-blog/Api/v1/Notebook"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Sitemap"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/User"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/cachehash"
@@ -37,7 +36,6 @@ func MercyRouter(router *gin.Engine) {
 		//Blog router
 		BlogRouter := v1.Group("/blog")
 		{
-
 			Blogs := Blog.InitControllerPost()
 			Blogs.SetCollection("Post")
 			BlogAdminRouter := BlogRouter.Group("/auth")
@@ -70,15 +68,6 @@ func MercyRouter(router *gin.Engine) {
 			DraftsRouter.GET("/p/:ObjectId", Drafts.Post)
 			DraftsRouter.GET("/find", Drafts.FindPost)
 		}
-		Notes := v1.Group("/notes")
-		{
-			Notes.Use(Middlewares.NeedAuthentication)
-
-			Notes.POST("/InsetPost", notebook.InsertNotes)
-			Notes.GET("/find", notebook.InsertNotes)
-			Notes.GET("/GetNotes", notebook.InsertNotes)
-
-		}
 		// My user grup
 		MyUser := v1.Group("/user")
 		{
@@ -109,13 +98,13 @@ func MercyRouter(router *gin.Engine) {
 		Adminsite.Use(Middlewares.NeedAuthentication)
 		{
 			Adminsite.POST("/CreateAccount", User.CreateAccount)
-			Adminsite.POST("/BanToken", User.Updateinfo)     //2/3/22
-			Adminsite.GET("/Ban/:UserID", admin.BanUser)     //2/3/22
-			Adminsite.GET("/Unban/:UserID", admin.UnbanUser) //2/3/22
+			Adminsite.POST("/BanToken", User.Updateinfo)
+			Adminsite.GET("/Ban/:UserID", admin.BanUser)
+			Adminsite.GET("/Unban/:UserID", admin.UnbanUser)
 			Adminsite.GET("/Cacherefresh", admin.ManualUpdateFeed)
-			Adminsite.POST("/UserManagement", admin.UserManagement)  //2/3/22
-			Adminsite.GET("/DumpUsers", admin.ListUsers)             //2/3/22
-			Adminsite.GET("/DelateAcount/:UserID", admin.DelateUser) //2/3/22
+			Adminsite.POST("/UserManagement", admin.UserManagement)
+			Adminsite.GET("/DumpUsers", admin.ListUsers)
+			Adminsite.GET("/DelateAcount/:UserID", admin.DelateUser)
 		}
 
 		//SecAudit
