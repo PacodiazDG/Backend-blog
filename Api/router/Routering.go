@@ -36,7 +36,6 @@ func MercyRouter(router *gin.Engine) {
 		//Blog router
 		BlogRouter := v1.Group("/blog")
 		{
-
 			Blogs := Blog.InitControllerPost()
 			Blogs.SetCollection("Post")
 			BlogAdminRouter := BlogRouter.Group("/auth")
