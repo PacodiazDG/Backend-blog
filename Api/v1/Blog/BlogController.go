@@ -112,14 +112,12 @@ func (v *PostController) FindPost(c *gin.Context) {
 	Feed1, err := v.Model.GetFeed(next, query)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
-		panic(err)
 		return
 	}
 	query = bson.M{"Description": bson.M{"$regex": primitive.Regex{Pattern: ".*" + search + ".*", Options: "gi"}}, "Visible": visibility, "Password": ""}
 	Feed2, err := v.Model.GetFeed(next, query)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
-		panic(err)
 		return
 	}
 	Feed1 = append(Feed1, Feed2...)
