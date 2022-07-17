@@ -129,7 +129,7 @@ func (v *PostController) FindPost(c *gin.Context) {
 			FinalFeed = append(FinalFeed, name)
 		}
 	}
-	c.JSON(200, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"Post": FinalFeed,
 	})
 }
@@ -171,7 +171,7 @@ func (v *PostController) Feed(c *gin.Context) {
 			return
 		}
 	} else {
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"Post": FastFeed,
 		})
 		return
@@ -187,7 +187,7 @@ func (v *PostController) Feed(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
 	}
-	c.JSON(200, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"Post": Feed,
 	})
 }
@@ -215,7 +215,7 @@ func (v *PostController) MyPosts(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
 	}
-	c.JSON(200, Feed)
+	c.JSON(http.StatusOK, Feed)
 }
 
 // Post retorna el post solicitado
@@ -303,7 +303,7 @@ func (v *PostController) Initialize(c *gin.Context) {
 		return
 	}
 	Initialize := PostSimpleStruct{
-		Title:       "New post" + time.Now().GoString(),
+		Title:       "New post" + (time.Now()).Format("2022-07-07 6:01:01"),
 		Content:     "write your content here",
 		Tags:        []string{"Example"},
 		Date:        time.Now(),
