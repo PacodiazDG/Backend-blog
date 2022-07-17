@@ -1,7 +1,7 @@
 package Blog
 
 import (
-	"github.com/PacodiazDG/Backend-blog/Extensions/RedisMercy"
+	"github.com/PacodiazDG/Backend-blog/Extensions/RedisBackend"
 	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
 )
 
@@ -19,7 +19,7 @@ var CacheRamPost *[]PostSimpleStruct
 
 //TokenBlackList gets if the token is blacklisted from some database
 func TokenBlackList(token, idtoken string) bool {
-	return RedisMercy.CheckBan(token, idtoken)
+	return RedisBackend.CheckBan(token, idtoken)
 }
 
 // Actualizar el top de los post mas vistos

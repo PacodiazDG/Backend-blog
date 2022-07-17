@@ -27,7 +27,7 @@ func Send(to []string, Subject, text string) {
 	}
 }
 
-//SendEmail Envia mail es el framework por default de mercy
+//SendEmail Envia mail es el framework por default de Backend
 func SendEmail(to []string, Subject, text string) {
 	if os.Getenv("UseSMTP") == "false" {
 		return

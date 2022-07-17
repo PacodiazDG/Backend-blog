@@ -20,7 +20,7 @@ func index(c *gin.Context) {
 }
 
 // Routerings
-func MercyRouter(router *gin.Engine) {
+func BackendRouter(router *gin.Engine) {
 	router.GET("/sitemap.xml", Sitemap.SiteMapxml)
 	router.GET("/", index)
 	router.GET("/Image/blog/:ImageName", mods.ImageController)

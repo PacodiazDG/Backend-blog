@@ -43,7 +43,7 @@ func SiteMapxml(c *gin.Context) {
 			return
 		}
 	} else {
-		//Return map Of mercy
+		//Return map Of Backend
 		CountDoc, err := collection.CountDocuments(c.Request.Context(), bson.M{"Visible": true})
 		if err != nil {
 			panic(err)
