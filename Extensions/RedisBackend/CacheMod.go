@@ -1,4 +1,4 @@
-package RedisMercy
+package RedisBackend
 
 import (
 	database "github.com/PacodiazDG/Backend-blog/Database"

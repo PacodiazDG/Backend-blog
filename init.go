@@ -22,7 +22,7 @@ func main() {
 	KeyFile := os.Getenv("KeyFile")
 	Server := gin.Default()
 	Server.Use(Middlewares.GlobalHeader)
-	router.MercyRouter(Server)
+	router.BackendRouter(Server)
 	if lisent == "" {
 		lisent = ":8080"
 	}

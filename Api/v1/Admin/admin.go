@@ -7,7 +7,7 @@ import (
 
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Blog"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/User"
-	"github.com/PacodiazDG/Backend-blog/Extensions/RedisMercy"
+	"github.com/PacodiazDG/Backend-blog/Extensions/RedisBackend"
 	"github.com/PacodiazDG/Backend-blog/Modules/Security"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
@@ -44,7 +44,7 @@ func BanUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Status": "User Not found"})
 		return
 	}
-	err = RedisMercy.SetBan(c.Param("UserID"))
+	err = RedisBackend.SetBan(c.Param("UserID"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, gin.H{"Status": "Banned from db"})
 		return
@@ -105,7 +105,7 @@ func UnbanUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Status": "User Not found"})
 		return
 	}
-	err = RedisMercy.RemoveBan(c.Param("UserID"))
+	err = RedisBackend.RemoveBan(c.Param("UserID"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, gin.H{"Status": "Banned from db"})
 		return

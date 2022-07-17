@@ -10,7 +10,7 @@ import (
 	"time"
 
 	database "github.com/PacodiazDG/Backend-blog/Database"
-	"github.com/PacodiazDG/Backend-blog/Extensions/RedisMercy"
+	"github.com/PacodiazDG/Backend-blog/Extensions/RedisBackend"
 	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
 	"github.com/PacodiazDG/Backend-blog/Modules/Security"
 	"github.com/PacodiazDG/Backend-blog/Modules/validation"
@@ -277,7 +277,7 @@ func DelateSession(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{"Status": "uuid is not valid"})
 		return
 	}
-	if RedisMercy.InsertBanidtoken(uudi) != nil {
+	if RedisBackend.InsertBanidtoken(uudi) != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Details": "an error occurred trying to ban the token"})
 		return
 	}
