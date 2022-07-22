@@ -27,7 +27,7 @@ func salvetoken(Token, Email string) error {
 	return nil
 }
 
-//RecoveryAccount cvds
+//RecoveryAccount
 func RecoveryAccount(c *gin.Context) {
 	Email := c.PostForm("EmailRecovery")
 	if Email == "" || !validation.IsValidEmail(Email) {

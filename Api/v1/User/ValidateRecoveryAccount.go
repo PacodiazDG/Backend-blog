@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// ValidateRecoveryAccount s
+// ValidateRecoveryAccount
 func ValidateRecoveryAccount(c *gin.Context) {
 	collection := *database.Database.Collection("RecoveryAccount")
 	Token := c.Param("Token")
