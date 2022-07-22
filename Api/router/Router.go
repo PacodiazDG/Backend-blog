@@ -90,7 +90,6 @@ func BackendRouter(router *gin.Engine) {
 		//
 		Performance := v1.Group("/Cache")
 		{
-			// check for changes in the feed otherwise update the browser cache Middlewares.VerifyToken()
 			Performance.GET("/FeedHashApi", cachehash.FeedHashApi)
 		}
 
