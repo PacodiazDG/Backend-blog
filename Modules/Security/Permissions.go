@@ -8,8 +8,8 @@ EDITOR|
 */
 //Permision Const
 const (
-	WritePost        = 'W' //FF
-	UpdatePost       = 'U' //vfdvdfF
+	WritePost        = 'W' //
+	UpdatePost       = 'U' //
 	DelatePost       = 'R' //
 	SiteConfig       = 'X' //
 	UserManagement   = 'G' //

@@ -25,9 +25,6 @@ func convertImgToBytes(m image.Image) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-/*
-convertImgToBytes Decrapped!!!
-*/
 func ImageController(c *gin.Context) {
 	file := filepath.Clean(c.Param("ImageName"))
 	dat, err := os.Open("./Serverfiles/blog/" + file)

@@ -16,7 +16,7 @@ type PostModel struct {
 	Collection string
 }
 
-// Gets the feed
+// Get the feed
 func (v *PostModel) GetFeed(id int64, query bson.M) ([]FeedStrcture, error) {
 	findOptions := options.Find()
 	collection := *database.Database.Collection(v.Collection)

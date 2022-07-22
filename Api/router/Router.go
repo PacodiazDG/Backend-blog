@@ -19,12 +19,10 @@ func index(c *gin.Context) {
 	})
 }
 
-// Routerings
 func BackendRouter(router *gin.Engine) {
 	router.GET("/sitemap.xml", Sitemap.SiteMapxml)
 	router.GET("/", index)
 	router.GET("/Image/blog/:ImageName", mods.ImageController)
-	//Decrapped <=1
 	router.Static("/assets/", "./Serverfiles")
 	router.LoadHTMLGlob("Templates/www/*")
 	router.HEAD("/ping", func(c *gin.Context) {
@@ -33,7 +31,6 @@ func BackendRouter(router *gin.Engine) {
 
 	v1 := router.Group("/v1")
 	{
-		//Blog router
 		BlogRouter := v1.Group("/blog")
 		{
 			Blogs := Blog.InitControllerPost()
@@ -51,9 +48,7 @@ func BackendRouter(router *gin.Engine) {
 			BlogRouter.GET("/feed", Blogs.Feed)
 			BlogRouter.GET("/find", Blogs.FindPost)
 			BlogRouter.GET("/visibility/:ObjectId", Blogs.Visibility)
-			//manualUpdateFeed
 		}
-		//Drafts
 
 		DraftsRouter := v1.Group("/drafts")
 		{
@@ -68,7 +63,7 @@ func BackendRouter(router *gin.Engine) {
 			DraftsRouter.GET("/p/:ObjectId", Drafts.Post)
 			DraftsRouter.GET("/find", Drafts.FindPost)
 		}
-		// My user grup
+
 		MyUser := v1.Group("/user")
 		{
 			MyUserAhut := MyUser.Group("/Ahut")
@@ -87,7 +82,6 @@ func BackendRouter(router *gin.Engine) {
 			MyUser.POST("/RecoveryAccount", User.RecoveryAccount)
 			MyUser.GET("/RecoveryAccount/:Token", User.ValidateRecoveryAccount)
 		}
-		//
 		Performance := v1.Group("/Cache")
 		{
 			Performance.GET("/FeedHashApi", cachehash.FeedHashApi)
@@ -105,8 +99,6 @@ func BackendRouter(router *gin.Engine) {
 			Adminsite.GET("/DumpUsers", admin.ListUsers)
 			Adminsite.GET("/DelateAcount/:UserID", admin.DelateUser)
 		}
-
-		//SecAudit
 		FileSystem := v1.Group("/Uplads/")
 		FileSystem.Use(Middlewares.NeedAuthentication)
 		{
