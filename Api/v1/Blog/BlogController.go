@@ -3,7 +3,7 @@ package Blog
 import (
 	"crypto/sha512"
 	"encoding/hex"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -389,7 +389,7 @@ func (PostController) FileSystemImage(c *gin.Context) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	byteContainer, err := ioutil.ReadAll(infofile)
+	byteContainer, err := io.ReadAll(infofile)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error reading file"})
 		return
