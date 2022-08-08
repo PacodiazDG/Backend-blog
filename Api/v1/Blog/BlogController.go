@@ -3,7 +3,7 @@ package Blog
 import (
 	"crypto/sha512"
 	"encoding/hex"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -68,7 +68,7 @@ func (v *PostController) InsertPost(c *gin.Context) {
 		Visible:       result.Visible,
 		Imagen:        result.Imagen,
 		Password:      result.Password,
-		Description:   validation.TruncateString((result.Description), 150) + "...",
+		Description:   validation.TruncateString((result.Description), 179),
 		Views:         0,
 		UrlImageFound: matches,
 	}
@@ -285,7 +285,7 @@ func (v *PostController) UpdatePost(c *gin.Context) {
 		Visible:     result.Visible,
 		Imagen:      result.Imagen,
 		Password:    result.Password,
-		Description: validation.TruncateString((result.Description), 139),
+		Description: validation.TruncateString((result.Description), 179),
 	}
 	_, err = v.Model.ModelUpdate(&result, PostID)
 	if err != nil {
@@ -389,7 +389,7 @@ func (PostController) FileSystemImage(c *gin.Context) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	byteContainer, err := ioutil.ReadAll(infofile)
+	byteContainer, err := io.ReadAll(infofile)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error reading file"})
 		return
