@@ -2,7 +2,6 @@ package Logs
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"time"
 )
@@ -25,7 +24,7 @@ func WriteLogs(errors error) {
 }
 
 func makefile(name string) {
-	err := ioutil.WriteFile(name, nil, 0644)
+	err := os.WriteFile(name, nil, 0644)
 	if err != nil {
 		fmt.Printf("Unable to write file: %v", err)
 	}
