@@ -32,6 +32,11 @@ func (v *PostController) SetCollection(Collection string) *PostController {
 	return v
 }
 
+// Obtine el feed de las ultimas publicaciones
+func (v *PostController) FeedFast() ([]FeedStrcture, error) {
+	return v.Model.GetFeed(0, bson.M{"Visible": true, "Password": ""})
+}
+
 // InsertPost
 func (v *PostController) InsertPost(c *gin.Context) {
 
@@ -359,11 +364,6 @@ func (v *PostController) Visibility(c *gin.Context) {
 // Retorna los post mas vistos
 func (v *PostController) SetTop() ([]PostSimpleStruct, error) {
 	return v.Model.GetTOP()
-}
-
-// Obtine el feed de las ultimas publicaciones
-func (v *PostController) FeedFast() ([]FeedStrcture, error) {
-	return v.Model.GetFeed(0, bson.M{"Visible": true, "Password": ""})
 }
 
 // Subir imagenes al servidor
