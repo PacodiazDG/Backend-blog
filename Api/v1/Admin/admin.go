@@ -2,7 +2,6 @@ package admin
 
 import (
 	"net/http"
-	"regexp"
 	"strconv"
 
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Blog"
@@ -13,7 +12,6 @@ import (
 	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
-	"gopkg.in/mgo.v2/bson"
 )
 
 // BanUser
@@ -218,7 +216,7 @@ func ManualUpdateFeed(c *gin.Context) {
 }
 
 // ListUsers
-func ListUsers(c *gin.Context) {
+func GetUsers(c *gin.Context) {
 	var next int64 = 0
 	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
 	if err != nil {
@@ -239,17 +237,14 @@ func ListUsers(c *gin.Context) {
 	}
 	next = next * 10
 	username := c.Query("Username")
-	usernameb := bson.M{}
-
 	if username != "" {
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Status": "Id not valid format"})
 			return
 		}
-		usernameb = bson.M{"Username": bson.M{"$regex": `(?i)` + regexp.QuoteMeta(username)}}
 		next = 0
 	}
-	listOfUsers, err := DumpUsers(next, usernameb)
+	listOfUsers, err := ListUsers(next, username)
 	if err != nil {
 		c.AbortWithStatus(500)
 		return

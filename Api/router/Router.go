@@ -96,7 +96,7 @@ func BackendRouter(router *gin.Engine) {
 			Adminsite.GET("/Unban/:UserID", admin.UnbanUser)
 			Adminsite.GET("/Cacherefresh", admin.ManualUpdateFeed)
 			Adminsite.POST("/UserManagement", admin.UserManagement)
-			Adminsite.GET("/DumpUsers", admin.ListUsers)
+			Adminsite.GET("/GetUsers", admin.GetUsers)
 			Adminsite.GET("/DelateAcount/:UserID", admin.DelateUser)
 		}
 		FileSystem := v1.Group("/Uplads/")

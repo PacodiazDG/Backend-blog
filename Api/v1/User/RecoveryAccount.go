@@ -17,9 +17,7 @@ import (
 
 func salvetoken(Token, Email string) error {
 	date := time.Now()
-	dbConfig := *database.Database
-
-	collection := dbConfig.Collection("RecoveryAccount")
+	collection := *database.Database.Collection("RecoveryAccount")
 	_, err := collection.InsertOne(context.TODO(), bson.M{"Token": Token, "Used": false, "Date": date.String(), "Email": Email})
 	if err != nil {
 		return err
@@ -27,7 +25,7 @@ func salvetoken(Token, Email string) error {
 	return nil
 }
 
-//RecoveryAccount
+// RecoveryAccount
 func RecoveryAccount(c *gin.Context) {
 	Email := c.PostForm("EmailRecovery")
 	if Email == "" || !validation.IsValidEmail(Email) {
@@ -36,8 +34,7 @@ func RecoveryAccount(c *gin.Context) {
 
 		return
 	}
-	dbConfig := *database.Database
-	collection := dbConfig.Collection("Users")
+	collection := *database.Database.Collection("Users")
 	var result UserStrcture
 	NoFound := collection.FindOne(context.TODO(), bson.M{"Email": Email}).Decode(&result)
 	if NoFound != nil {
