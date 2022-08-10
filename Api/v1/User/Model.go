@@ -58,6 +58,7 @@ func IPAddrUser(data *IpAddrUser) (bool, error) {
 	}
 	return true, nil
 }
+
 func RemoveIPAddrUser(uudi string) error {
 	collection := *database.Database.Collection("IPAddrUser")
 	removed, err := collection.DeleteOne(context.TODO(), bson.M{"Uuidtoken": uudi})
