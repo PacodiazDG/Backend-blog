@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-//WriteLogs maneja los errores
+// WriteLogs maneja los errores
 func WriteLogs(errors error) {
 	s := errors.Error()
 	f, err := os.OpenFile("./error.log",
@@ -23,6 +23,7 @@ func WriteLogs(errors error) {
 		panic(err)
 	}
 }
+
 func makefile(name string) {
 	err := ioutil.WriteFile(name, nil, 0644)
 	if err != nil {

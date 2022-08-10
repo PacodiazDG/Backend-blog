@@ -1,4 +1,4 @@
-package cachehash
+package FeedHash
 
 import (
 	"net/http"

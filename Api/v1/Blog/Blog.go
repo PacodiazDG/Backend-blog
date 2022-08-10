@@ -26,7 +26,7 @@ func InitControllerPost() *PostController {
 	return &PostController{}
 }
 
-//SetCollection Este método cambia de coleccion en la base de datos
+// SetCollection Este método cambia de coleccion en la base de datos
 func (v *PostController) SetCollection(Collection string) *PostController {
 	v.Model.Collection = Collection
 	return v
@@ -134,7 +134,7 @@ func (v *PostController) FindPost(c *gin.Context) {
 	})
 }
 
-//DelatePost
+// DelatePost
 func (v *PostController) DelatePost(c *gin.Context) {
 	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
 	if err != nil {

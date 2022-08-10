@@ -5,10 +5,10 @@ import (
 
 	admin "github.com/PacodiazDG/Backend-blog/Api/v1/Admin"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Blog"
-	mods "github.com/PacodiazDG/Backend-blog/Api/v1/Mods"
+	"github.com/PacodiazDG/Backend-blog/Api/v1/FeedHash"
+	"github.com/PacodiazDG/Backend-blog/Api/v1/Fileupload"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Sitemap"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/User"
-	"github.com/PacodiazDG/Backend-blog/Api/v1/cachehash"
 	"github.com/PacodiazDG/Backend-blog/Middlewares"
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +22,7 @@ func index(c *gin.Context) {
 func BackendRouter(router *gin.Engine) {
 	router.GET("/sitemap.xml", Sitemap.SiteMapxml)
 	router.GET("/", index)
-	router.GET("/Image/blog/:ImageName", mods.ImageController)
+	router.GET("/Image/blog/:ImageName", Fileupload.BlogImageUpload)
 	router.Static("/assets/", "./Serverfiles")
 	router.LoadHTMLGlob("Templates/www/*")
 	router.HEAD("/ping", func(c *gin.Context) {
@@ -84,7 +84,7 @@ func BackendRouter(router *gin.Engine) {
 		}
 		Performance := v1.Group("/Cache")
 		{
-			Performance.GET("/FeedHashApi", cachehash.FeedHashApi)
+			Performance.GET("/FeedHashApi", FeedHash.FeedHashApi)
 		}
 
 		Adminsite := v1.Group("/admin/")

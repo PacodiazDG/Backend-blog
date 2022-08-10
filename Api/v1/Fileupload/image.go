@@ -1,4 +1,4 @@
-package mods
+package Fileupload
 
 import (
 	"bytes"
@@ -25,7 +25,7 @@ func convertImgToBytes(m image.Image) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func ImageController(c *gin.Context) {
+func BlogImageUpload(c *gin.Context) {
 	file := filepath.Clean(c.Param("ImageName"))
 	dat, err := os.Open("./Serverfiles/blog/" + file)
 	if err != nil {
