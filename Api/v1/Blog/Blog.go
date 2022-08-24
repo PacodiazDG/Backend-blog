@@ -1,23 +1,19 @@
 package Blog
 
 import (
-	"crypto/sha512"
-	"encoding/hex"
-	"io"
 	"net/http"
 	"regexp"
 	"strconv"
 	"time"
 
 	"github.com/PacodiazDG/Backend-blog/Modules/Security"
-	"github.com/PacodiazDG/Backend-blog/Modules/validation"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
 )
 
 type PostController struct {
-	Model      PostModel
+	Conf       Queryconf
 	Collection string
 }
 
@@ -28,66 +24,13 @@ func InitControllerPost() *PostController {
 
 // SetCollection Este método cambia de coleccion en la base de datos
 func (v *PostController) SetCollection(Collection string) *PostController {
-	v.Model.Collection = Collection
+	v.Conf.Collection = Collection
 	return v
 }
 
 // Obtine el feed de las ultimas publicaciones
 func (v *PostController) FeedFast() ([]FeedStrcture, error) {
-	return v.Model.GetFeed(0, bson.M{"Visible": true, "Password": ""})
-}
-
-// InsertPost
-func (v *PostController) InsertPost(c *gin.Context) {
-
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error Token not valid"})
-		return
-	}
-	if !Security.XCheckpermissions((jwtinfo["authority"].(string)), []rune{Security.PublishPost}) {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Need more permissions"})
-		return
-	}
-	var result PostSimpleStruct
-	if err := c.ShouldBindJSON(&result); err != nil {
-		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid json provided")
-		return
-	}
-	if err := IsValidStruct(&result); err != nil {
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Status": "Error",
-			"Details": err})
-		return
-	}
-	if result.Imagen == "" {
-		result.Imagen = "https://cdn.pixabay.com/photo/2015/04/23/21/59/tree-736877_960_720.jpg"
-	}
-	re := regexp.MustCompile(`([A-Fa-f0-9]{128}(.jpg|.jpeg|.png|.gif))`)
-	matches := re.FindAllString(result.Content, -1)
-	result = PostSimpleStruct{
-		Title:         result.Title,
-		Content:       result.Content,
-		Tags:          result.Tags,
-		Date:          time.Now(),
-		Author:        jwtinfo["Userid"].(string),
-		Visible:       result.Visible,
-		Imagen:        result.Imagen,
-		Password:      result.Password,
-		Description:   validation.TruncateString((result.Description), 179),
-		Views:         0,
-		UrlImageFound: matches,
-	}
-	Status, err := v.Model.ModelInsertPost(&result)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"Status:": "Error",
-			"Details": err,
-		})
-		return
-	}
-	c.JSON(http.StatusOK, Status)
-	ReflexCache()
-
+	return v.Conf.GetFeed(0, bson.M{"Visible": true, "Password": ""})
 }
 
 // FindPost Api
@@ -114,13 +57,13 @@ func (v *PostController) FindPost(c *gin.Context) {
 		visibility = false
 	}
 	query = bson.M{"Title": bson.M{"$regex": primitive.Regex{Pattern: ".*" + search + ".*", Options: "gi"}}, "Visible": visibility, "Password": ""}
-	Feed1, err := v.Model.GetFeed(next, query)
+	Feed1, err := v.Conf.GetFeed(next, query)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
 	}
 	query = bson.M{"Description": bson.M{"$regex": primitive.Regex{Pattern: ".*" + search + ".*", Options: "gi"}}, "Visible": visibility, "Password": ""}
-	Feed2, err := v.Model.GetFeed(next, query)
+	Feed2, err := v.Conf.GetFeed(next, query)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
@@ -137,31 +80,6 @@ func (v *PostController) FindPost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"Post": FinalFeed,
 	})
-}
-
-// DelatePost
-func (v *PostController) DelatePost(c *gin.Context) {
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Invalid token"})
-		return
-	}
-	if !Security.XCheckpermissions((jwtinfo["authority"].(string)), []rune{Security.DelatePost}) {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Need more permissions"})
-		return
-	}
-	objectId, err := primitive.ObjectIDFromHex(c.Param("ObjectId"))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Status:": "Error ObjectId Invalid"})
-		return
-	}
-	err = v.Model.DelatePost(objectId)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotImplemented, gin.H{"Status": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"Status": "Successfully removed"})
-	ReflexCache()
 }
 
 // Feed es el Feed principal
@@ -187,7 +105,7 @@ func (v *PostController) Feed(c *gin.Context) {
 	if err != nil {
 		query = bson.M{"Visible": true, "Password": ""}
 	}
-	Feed, err := v.Model.GetFeed(next, query)
+	Feed, err := v.Conf.GetFeed(next, query)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
@@ -197,39 +115,13 @@ func (v *PostController) Feed(c *gin.Context) {
 	})
 }
 
-// MyPosts Retorna los post publicados por el usuario
-func (v *PostController) MyPosts(c *gin.Context) {
-	var next int64 = 0
-	var err error
-	skip := c.Query("next")
-	if skip != "" {
-		next, err = strconv.ParseInt(skip, 10, 64)
-		if err != nil {
-			c.AbortWithStatus(http.StatusNotAcceptable)
-			return
-		}
-	}
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token Not valid"})
-		return
-	}
-	query := bson.M{"Author": jwtinfo["Userid"].(string)}
-	Feed, err := v.Model.GetFeed(next, query)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
-		return
-	}
-	c.JSON(http.StatusOK, Feed)
-}
-
 // Post retorna el post solicitado
 func (v *PostController) Post(c *gin.Context) {
 	CacheAvailable := false
 	var Cache PostSimpleStruct
 	PostID, err := primitive.ObjectIDFromHex(c.Param("ObjectId"))
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Stauts": "Id not valid"})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Stauts": "Id not valid"})
 		return
 	}
 	for i := range *CacheRamPost {
@@ -245,10 +137,10 @@ func (v *PostController) Post(c *gin.Context) {
 			"Post":        Cache,
 			"Performance": true,
 		})
-		go v.Model.Addviews(PostID)
+		go v.Conf.Addviews(PostID)
 		return
 	}
-	result, err := (v.Model).ModelGetArticle(PostID)
+	result, err := (v.Conf).ModelGetArticle(PostID)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Stauts": err.Error()})
 		return
@@ -258,46 +150,11 @@ func (v *PostController) Post(c *gin.Context) {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
-	go v.Model.Addviews(PostID)
+	go v.Conf.Addviews(PostID)
 	c.JSON(http.StatusOK, gin.H{
 		"Post":        result,
 		"Performance": false,
 	})
-}
-
-// UpdatePost
-func (v *PostController) UpdatePost(c *gin.Context) {
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid."})
-		return
-	}
-	var result PostSimpleStruct
-	if err := c.ShouldBindJSON(&result); err != nil {
-		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid json provided")
-		return
-	}
-	PostID, err := primitive.ObjectIDFromHex(c.Param("ObjectId"))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid ObjectId")
-		return
-	}
-	result = PostSimpleStruct{
-		Title:       result.Title,
-		Content:     result.Content,
-		Tags:        result.Tags,
-		Author:      jwtinfo["Userid"].(string),
-		Visible:     result.Visible,
-		Imagen:      result.Imagen,
-		Password:    result.Password,
-		Description: validation.TruncateString((result.Description), 179),
-	}
-	_, err = v.Model.ModelUpdate(&result, PostID)
-	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
-	}
-	c.JSON(http.StatusOK, "ok")
-	ReflexCache()
 }
 
 // Initialize Inizializa un post o un draft
@@ -318,7 +175,7 @@ func (v *PostController) Initialize(c *gin.Context) {
 		Description: "write your description here",
 		Views:       0,
 	}
-	Infomodel, err := v.Model.ModelInsertPost(&Initialize)
+	Infomodel, err := v.Conf.ModelInsertPost(&Initialize)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"Status:": "Error",
@@ -353,7 +210,7 @@ func (v *PostController) Visibility(c *gin.Context) {
 	ProcessData := PostSimpleStruct{
 		Visible: VisibleStatus,
 	}
-	_, err = v.Model.ModelUpdate(&ProcessData, PostID)
+	_, err = v.Conf.ModelUpdate(&ProcessData, PostID)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"": ""})
 		return
@@ -363,51 +220,5 @@ func (v *PostController) Visibility(c *gin.Context) {
 
 // Retorna los post mas vistos
 func (v *PostController) SetTop() ([]PostSimpleStruct, error) {
-	return v.Model.GetTOP()
-}
-
-// Subir imagenes al servidor
-func (PostController) FileSystemImage(c *gin.Context) {
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid."})
-		return
-	}
-	if !Security.XCheckpermissions((jwtinfo["authority"].(string)), []rune{Security.UploadFiles}) {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Need more permissions"})
-		return
-	}
-	file, err := c.FormFile("file")
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"message": "No file is received",
-		})
-		return
-	}
-	infofile, err := file.Open()
-	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-	byteContainer, err := io.ReadAll(infofile)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error reading file"})
-		return
-	}
-	MIME := http.DetectContentType(byteContainer)
-
-	if !Security.IsImageMIME(MIME) {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "It is not image"})
-		return
-	}
-	h := sha512.New()
-	h.Write(byteContainer)
-	hash := hex.EncodeToString(h.Sum(nil))
-	if err := c.SaveUploadedFile(file, "./Serverfiles/blog/"+hash+".png"); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"message": "Unable to save the file",
-		})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"Url": "/assets/blog/" + hash + ".png"})
+	return v.Conf.GetTOP()
 }
