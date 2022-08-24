@@ -17,13 +17,13 @@ var FastFeed []FeedStrcture
 // Variable global para cacheRam
 var CacheRamPost *[]PostSimpleStruct
 
-//TokenBlackList gets if the token is blacklisted from some database
+// TokenBlackList gets if the token is blacklisted from some database
 func TokenBlackList(token, idtoken string) bool {
 	return RedisBackend.CheckBan(token, idtoken)
 }
 
 // Actualizar el top de los post mas vistos
-func SetTop() {
+func SetTopPost() {
 	Blogs.SetCollection("Post")
 	info, err := Blogs.SetTop()
 	if err != nil {
@@ -32,9 +32,8 @@ func SetTop() {
 	CacheRamPost = &info
 }
 
-//SetFastFeed
-func SetFastFeed() {
-
+// SetFastFeed
+func SetTopFeed() {
 	Blogs.SetCollection("Post")
 	info, err := Blogs.FeedFast()
 	if err != nil {
@@ -45,6 +44,6 @@ func SetFastFeed() {
 }
 
 func ReflexCache() {
-	SetFastFeed()
-	SetTop()
+	SetTopFeed()
+	SetTopPost()
 }
