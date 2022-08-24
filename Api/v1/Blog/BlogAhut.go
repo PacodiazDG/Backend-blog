@@ -149,9 +149,7 @@ func (PostController) FileSystemImage(c *gin.Context) {
 	}
 	file, err := c.FormFile("file")
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"message": "No file is received",
-		})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": "No file is received"})
 		return
 	}
 	infofile, err := file.Open()
@@ -174,10 +172,34 @@ func (PostController) FileSystemImage(c *gin.Context) {
 	h.Write(byteContainer)
 	hash := hex.EncodeToString(h.Sum(nil))
 	if err := c.SaveUploadedFile(file, "./Serverfiles/blog/"+hash+".png"); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"message": "Unable to save the file",
-		})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Unable to save the file"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"Url": "/assets/blog/" + hash + ".png"})
+}
+
+// Initialize Inizializa un post o un draft
+func (v *PostController) Initialize(c *gin.Context) {
+	jwtinfo, err := Security.CheckTokenPermissions([]rune{Security.PublishPost}, c.Request)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
+		return
+	}
+	Initialize := PostSimpleStruct{
+		Title:       "New post",
+		Content:     "write your content here",
+		Tags:        []string{"Example"},
+		Date:        time.Now(),
+		Author:      jwtinfo["Userid"].(string),
+		Visible:     false,
+		Imagen:      "",
+		Description: "write your description here",
+		Views:       0,
+	}
+	Infomodel, err := v.Conf.ModelInsertPost(&Initialize)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status:": "An error occurred initializing the post"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"Status": Infomodel.InsertedID})
 }

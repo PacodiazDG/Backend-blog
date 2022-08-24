@@ -5,8 +5,8 @@ type ErrorApi struct {
 }
 
 type Error struct {
-	Menssage string
-	Error    error
+	ErrorApi error
+	Errordbg error
 }
 
 func Filter() {

@@ -7,33 +7,26 @@ import (
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Blog"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/User"
 	"github.com/PacodiazDG/Backend-blog/Extensions/RedisBackend"
+	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
 	"github.com/PacodiazDG/Backend-blog/Modules/Security"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
 // BanUser
 func BanUser(c *gin.Context) {
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
+	_, err := Security.CheckTokenPermissions([]rune{Security.BanUser}, c.Request)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error 0x1584584c"})
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
-	}
-	if !Security.XCheckpermissions((jwtinfo["authority"].(string)), []rune{Security.BanUser}) {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Need more permissions"})
-		return
-	}
-	Info := User.UserStrcture{
-		Banned: true,
 	}
 	IDuser, err := primitive.ObjectIDFromHex(c.Param("UserID"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": "ID type no valid."})
 		return
 	}
-	result, err := User.UpdateUserInfo(IDuser, &Info)
+	result, err := User.UpdateUserInfo(IDuser, &User.UserStrcture{Banned: true})
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": err.Error()})
 		return
@@ -53,13 +46,9 @@ func BanUser(c *gin.Context) {
 // DelateUser
 
 func DelateUser(c *gin.Context) {
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
+	_, err := Security.CheckTokenPermissions([]rune{Security.UserManagement}, c.Request)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error 0x1584584c"})
-		return
-	}
-	if !Security.XCheckpermissions((jwtinfo["authority"].(string)), []rune{Security.BanUser}) {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Need more permissions"})
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
 	IDuser, err := primitive.ObjectIDFromHex(c.Param("UserID"))
@@ -77,13 +66,9 @@ func DelateUser(c *gin.Context) {
 
 // UnbanUser
 func UnbanUser(c *gin.Context) {
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
+	_, err := Security.CheckTokenPermissions([]rune{Security.BanUser}, c.Request)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error 0x1584584c"})
-		return
-	}
-	if !Security.XCheckpermissions((jwtinfo["authority"].(string)), []rune{Security.BanUser}) {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Need more permissions"})
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
 	Info := User.UserStrcture{
@@ -114,24 +99,18 @@ func UnbanUser(c *gin.Context) {
 // ChangeAbout
 func ChangeAbout(c *gin.Context) {
 	c.AbortWithStatus(200)
-
 }
 
-// ChangeInfoForUser
+// ChangeInfoForUser Cambia
 func ChangeInfoForUser(c *gin.Context) {
+	_, err := Security.CheckTokenPermissions([]rune{Security.UserManagement}, c.Request)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
+		return
+	}
 	var Info User.UserStrcture
 	if err := c.ShouldBindJSON(&Info); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	Info.Permissions = ""
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error: 0xc4962bf2d5"})
-		return
-	}
-	if !Security.XCheckpermissions((jwtinfo["authority"].(string)), []rune{Security.UserManagement}) {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error: You do not have sufficient permissions"})
+		c.JSON(http.StatusBadRequest, gin.H{"Status": err.Error()})
 		return
 	}
 	objID, err := primitive.ObjectIDFromHex(Info.ID)
@@ -139,41 +118,33 @@ func ChangeInfoForUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error: No valid UserID"})
 		return
 	}
+	Info.Permissions = ""
 	_, err = User.UpdateUserInfo(objID, &Info)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"Status: ": "Error",
-			"Details":  "Error in Database",
-		})
-
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status: ": err.Error()})
 		return
 	}
 }
 
 // UserManagement
 func UserManagement(c *gin.Context) {
+	_, err := Security.CheckTokenPermissions([]rune{Security.UserManagement}, c.Request)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
+		return
+	}
 	var result User.UserStrcture
 	if err := c.ShouldBindJSON(&result); err != nil {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid json provided")
 		return
 	}
-	token, err := Security.VerifyToken(c.Request)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token Not valid"})
-		return
-	}
-	jwtinfo := token.Claims.(jwt.MapClaims)
-	_ = jwtinfo
-	password := []byte(result.Password)
-	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(result.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}
-
-	result.Password = string(hashedPassword)
 	Info := User.UserStrcture{
 		Username:    result.Username,
-		Password:    result.Password,
+		Password:    string(hashedPassword),
 		FirstName:   result.FirstName,
 		LastName:    result.LastName,
 		Email:       result.Email,
@@ -191,9 +162,7 @@ func UserManagement(c *gin.Context) {
 	}
 	_, err = User.UpdateUserInfo(IDuser, &Info)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-			"Status": err.Error(),
-		})
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Status": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"Status": "User Updated"})
@@ -201,32 +170,24 @@ func UserManagement(c *gin.Context) {
 
 // ManualUpdateFeed
 func ManualUpdateFeed(c *gin.Context) {
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
+	_, err := Security.CheckTokenPermissions([]rune{Security.SiteConfig}, c.Request)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error 0x1584584c"})
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
-	if !Security.XCheckpermissions((jwtinfo["authority"].(string)), []rune{Security.SiteConfig}) {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Need more permissions"})
-		return
-	}
-	Blog.SetFastFeed()
-	Blog.SetTop()
+	Blog.SetTopFeed()
+	Blog.SetTopPost()
 	c.AbortWithStatusJSON(http.StatusOK, gin.H{"Status": "Cache Updated"})
 }
 
 // ListUsers
 func GetUsers(c *gin.Context) {
-	var next int64 = 0
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
+	_, err := Security.CheckTokenPermissions([]rune{Security.UserManagement}, c.Request)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error 0x1584584c"})
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
-	if !Security.XCheckpermissions((jwtinfo["authority"].(string)), []rune{Security.UserManagement}) {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Need more permissions"})
-		return
-	}
+	var next int64 = 0
 	skip := c.Query("next")
 	if skip != "" {
 		next, err = strconv.ParseInt(skip, 10, 64)
@@ -246,7 +207,7 @@ func GetUsers(c *gin.Context) {
 	}
 	listOfUsers, err := ListUsers(next, username)
 	if err != nil {
-		c.AbortWithStatus(500)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, Logs.ErrorApi{Status: err.Error()})
 		return
 	}
 	c.AbortWithStatusJSON(200, gin.H{"Status": listOfUsers})

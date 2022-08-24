@@ -21,7 +21,7 @@ const (
 
 //XCheckpermissions  Verifica el de los permisos y lo compara con los necesarios para completar la tarea
 //.Retorna true si esta se puede completar
-func XCheckpermissions(Permissions string, Need []rune) bool {
+func OnlyCheckpermissions(Permissions string, Need []rune) bool {
 	check := 0
 	for _, v := range Permissions {
 		for _, k := range Need {

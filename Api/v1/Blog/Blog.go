@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
-	"time"
 
 	"github.com/PacodiazDG/Backend-blog/Modules/Security"
 	"github.com/gin-gonic/gin"
@@ -155,39 +154,6 @@ func (v *PostController) Post(c *gin.Context) {
 		"Post":        result,
 		"Performance": false,
 	})
-}
-
-// Initialize Inizializa un post o un draft
-func (v *PostController) Initialize(c *gin.Context) {
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"": ""})
-		return
-	}
-	Initialize := PostSimpleStruct{
-		Title:       "New post" + (time.Now()).Format("2022-07-07 6:01:01"),
-		Content:     "write your content here",
-		Tags:        []string{"Example"},
-		Date:        time.Now(),
-		Author:      jwtinfo["Userid"].(string),
-		Visible:     false,
-		Imagen:      "",
-		Description: "write your description here",
-		Views:       0,
-	}
-	Infomodel, err := v.Conf.ModelInsertPost(&Initialize)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"Status:": "Error",
-			"Details": err,
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"Status": Infomodel.InsertedID,
-	})
-
 }
 
 // Visibility Cambia la visiblidad de un  post

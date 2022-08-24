@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 // WriteLogs maneja los errores
@@ -30,8 +28,4 @@ func makefile(name string) {
 	if err != nil {
 		fmt.Printf("Unable to write file: %v", err)
 	}
-}
-
-func GinAbortLog(code int, obj any, k *gin.Context) {
-	k.AbortWithStatusJSON(code, obj)
 }
