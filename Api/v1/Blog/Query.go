@@ -11,13 +11,12 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type PostModel struct {
-	Test       mongo.Collection
+type Queryconf struct {
 	Collection string
 }
 
 // Get the feed
-func (v *PostModel) GetFeed(id int64, query bson.M) ([]FeedStrcture, error) {
+func (v *Queryconf) GetFeed(id int64, query bson.M) ([]FeedStrcture, error) {
 	findOptions := options.Find()
 	collection := *database.Database.Collection(v.Collection)
 	findOptions.SetSort(bson.M{"_id": -1})
@@ -31,11 +30,14 @@ func (v *PostModel) GetFeed(id int64, query bson.M) ([]FeedStrcture, error) {
 	if err = cursor.All(context.Background(), &results); err != nil {
 		return []FeedStrcture{}, err
 	}
+	if len(results) == 0 {
+		return []FeedStrcture{}, nil
+	}
 	return results, nil
 }
 
 // Insert a post from a structure
-func (v *PostModel) ModelInsertPost(result *PostSimpleStruct) (*mongo.InsertOneResult, error) {
+func (v *Queryconf) ModelInsertPost(result *PostSimpleStruct) (*mongo.InsertOneResult, error) {
 	collection := *database.Database.Collection(v.Collection)
 	info, err := collection.InsertOne(context.Background(), result)
 	if err != nil {
@@ -45,7 +47,7 @@ func (v *PostModel) ModelInsertPost(result *PostSimpleStruct) (*mongo.InsertOneR
 }
 
 // Gets a post from an id
-func (v *PostModel) ModelGetArticle(objectId primitive.ObjectID) (PostSimpleStruct, error) {
+func (v *Queryconf) ModelGetArticle(objectId primitive.ObjectID) (PostSimpleStruct, error) {
 	collection := *database.Database.Collection(v.Collection)
 	var result PostSimpleStruct
 	err := collection.FindOne(context.Background(), bson.M{"_id": objectId}).Decode(&result)
@@ -56,7 +58,7 @@ func (v *PostModel) ModelGetArticle(objectId primitive.ObjectID) (PostSimpleStru
 }
 
 // Update a post from a structure
-func (v *PostModel) ModelUpdate(dataInsert *PostSimpleStruct, objectId primitive.ObjectID) (bool, error) {
+func (v *Queryconf) ModelUpdate(dataInsert *PostSimpleStruct, objectId primitive.ObjectID) (bool, error) {
 	collection := *database.Database.Collection(v.Collection)
 	_, err := collection.UpdateOne(context.Background(), bson.M{"_id": objectId}, bson.M{"$set": dataInsert})
 	if err != nil {
@@ -66,7 +68,7 @@ func (v *PostModel) ModelUpdate(dataInsert *PostSimpleStruct, objectId primitive
 }
 
 // Delete a specific post
-func (v *PostModel) DelatePost(id primitive.ObjectID) error {
+func (v *Queryconf) DelatePost(id primitive.ObjectID) error {
 	collection := *database.Database.Collection(v.Collection)
 	cursor, err := collection.DeleteOne(context.Background(), bson.M{"_id": id})
 	if err != nil {
@@ -79,7 +81,7 @@ func (v *PostModel) DelatePost(id primitive.ObjectID) error {
 }
 
 // Adds the number of visits from a specific post
-func (v *PostModel) Addviews(id primitive.ObjectID) error {
+func (v *Queryconf) Addviews(id primitive.ObjectID) error {
 	_, err := (*database.Database.Collection(v.Collection)).UpdateOne(context.Background(), bson.M{
 		"_id": id}, bson.M{"$inc": bson.M{"Views": 1}})
 	if err != nil {
@@ -89,7 +91,7 @@ func (v *PostModel) Addviews(id primitive.ObjectID) error {
 }
 
 // Get the last ten posts most viewed
-func (v *PostModel) GetTOP() ([]PostSimpleStruct, error) {
+func (v *Queryconf) GetTOP() ([]PostSimpleStruct, error) {
 	collection := *database.Database.Collection(v.Collection)
 	findOptions := options.Find()
 	findOptions.SetSort(bson.M{"Views": -1})
