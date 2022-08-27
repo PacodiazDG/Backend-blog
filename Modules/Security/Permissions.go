@@ -2,11 +2,7 @@ package Security
 
 import "github.com/PacodiazDG/Backend-blog/Modules/validation"
 
-/*
-EDITOR|
-
-*/
-//Permision Const
+// Permision Const
 const (
 	WritePost        = 'W' //
 	UpdatePost       = 'U' //
@@ -19,8 +15,8 @@ const (
 	UploadFiles      = 'L' //
 )
 
-//XCheckpermissions  Verifica el de los permisos y lo compara con los necesarios para completar la tarea
-//.Retorna true si esta se puede completar
+// XCheckpermissions  Verifica el de los permisos y lo compara con los necesarios para completar la tarea
+// Retorna true si esta se puede completar
 func OnlyCheckpermissions(Permissions string, Need []rune) bool {
 	check := 0
 	for _, v := range Permissions {

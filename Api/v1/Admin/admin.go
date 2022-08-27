@@ -181,7 +181,7 @@ func ManualUpdateFeed(c *gin.Context) {
 }
 
 // ListUsers
-func GetUsers(c *gin.Context) {
+func ListofUsers(c *gin.Context) {
 	_, err := Security.CheckTokenPermissions([]rune{Security.UserManagement}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})

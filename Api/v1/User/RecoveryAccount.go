@@ -62,6 +62,6 @@ func RecoveryAccount(c *gin.Context) {
 		panic(err)
 	}
 	results := tpl.String()
-	//SMTPM.Send([]string{Email}, "Test", result)
+	// SMTPM.Send([]string{Email}, "Test", result)
 	_ = results
 }
