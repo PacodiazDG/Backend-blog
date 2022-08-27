@@ -11,7 +11,7 @@ import (
 func AutoSetCacheTop() {
 	ticker := time.NewTicker(10 * time.Minute)
 	quit := make(chan struct{})
-	Blog.SetFastFeed()
+	Blog.SetTopFeed()
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {

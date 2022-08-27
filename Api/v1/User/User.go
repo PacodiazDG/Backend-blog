@@ -93,19 +93,15 @@ func Login(c *gin.Context) {
 		return
 	}
 	SMTPM.Send([]string{u.Email}, "Your account was accessed from a new IP address", tpl.String())
-	//Security.BanedToken(token)
+	// Security.BanedToken(token)
 	c.JSON(http.StatusOK, gin.H{"Token": "Bearer " + token})
 }
 
 func CreateAccount(c *gin.Context) {
 	var result UserStrcture
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
+	_, err := Security.CheckTokenPermissions([]rune{Security.UserManagement}, c.Request)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error 0x1584584c"})
-		return
-	}
-	if !Security.XCheckpermissions((jwtinfo["authority"].(string)), []rune{Security.UserManagement}) {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Need more permissions"})
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
 	if err := c.ShouldBindJSON(&result); err != nil {
@@ -123,16 +119,14 @@ func CreateAccount(c *gin.Context) {
 		return
 	}
 	if !validation.IsvalidNormalstring(result.Username) || !validation.IsvalidNormalstring(result.FirstName) || !validation.IsvalidNormalstring(result.LastName) {
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Status": "Error",
-			"Description": "Invalid Username"})
+		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Status": "Invalid Username"})
 		return
 	}
 	collection := *database.Database.Collection("Users")
 	var Email bson.M
 	collection.FindOne(context.TODO(), bson.M{"Email": result.Email}).Decode(&Email)
 	if Email != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Status": "Error",
-			"Description": "This email is already registered"})
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Status": "This email is already registered"})
 		return
 	}
 	if len(result.Permissions) < 9 {
@@ -218,7 +212,7 @@ func DelateaAccount(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"Info": GetInfo,
+		"Status": GetInfo,
 	})
 
 }

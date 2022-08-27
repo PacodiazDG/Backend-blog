@@ -15,7 +15,7 @@ func PermissionsManager() {
 
 }
 
-//ExtractToken
+// ExtractToken
 func ExtractToken(r *http.Request) string {
 	bearToken := r.Header.Get("Authorization")
 	strArr := strings.Split(bearToken, " ")
@@ -25,13 +25,13 @@ func ExtractToken(r *http.Request) string {
 	return ""
 }
 
-//GetinfoToken Solo obtine la informacion del token
+// GetinfoToken Solo obtine la informacion del token
 func GetinfoToken(tokenStr string) (jwt.MapClaims, error) {
 	token, _ := jwt.Parse(tokenStr, nil)
 	return token.Claims.(jwt.MapClaims), nil
 }
 
-//VerifyToken Esto verifica que el token sea valido a partir Request
+// VerifyToken Esto verifica que el token sea valido a partir Request
 func VerifyToken(r *http.Request) (*jwt.Token, error) {
 	token, err := jwt.Parse(ExtractToken(r), func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -72,4 +72,16 @@ func VerifyAuthority(Authoritytoken string, AuthoritySys ...rune) bool {
 		}
 	}
 	return finded == len(AuthoritySys)
+}
+
+// CheckTokenPermissions a partir de un  Request valida el token y los permisos solicitados
+func CheckTokenPermissions(Need []rune, r *http.Request) (jwt.MapClaims, error) {
+	jwtinfo, err := GetinfoToken(ExtractToken(r))
+	if err != nil {
+		return nil, errors.New("token not valid")
+	}
+	if !OnlyCheckpermissions((jwtinfo["authority"].(string)), Need) {
+		return nil, errors.New("need more permissions")
+	}
+	return jwtinfo, nil
 }

@@ -72,6 +72,6 @@ func Conf() {
 	}
 	database.Initdb()
 	database.InitRedis()
-	Blog.SetTop()
+	Blog.SetTopPost()
 	services.AutoSetCacheTop()
 }

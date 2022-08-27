@@ -1,11 +1,11 @@
-#Full url connect of database mongodb
+# Full url connect of database mongodb
 DB_CONFIG=mongodb+srv://Blog:Passexample@example.com/Blog?retryWrites=true&w=majority
 
-#JWT Secret default rand 
+# JWT Secret default rand 
 JWT_SECRET=Passexamle
 TokenExpirationTimeInMinutes=20160
 
-#Database name 
+# Database name 
 DefaultDatabase=Blog
 
 # Url your site

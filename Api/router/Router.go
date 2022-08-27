@@ -5,7 +5,6 @@ import (
 
 	admin "github.com/PacodiazDG/Backend-blog/Api/v1/Admin"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Blog"
-	"github.com/PacodiazDG/Backend-blog/Api/v1/FeedHash"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Fileupload"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Sitemap"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/User"
@@ -82,11 +81,6 @@ func BackendRouter(router *gin.Engine) {
 			MyUser.POST("/RecoveryAccount", User.RecoveryAccount)
 			MyUser.GET("/RecoveryAccount/:Token", User.ValidateRecoveryAccount)
 		}
-		Performance := v1.Group("/Cache")
-		{
-			Performance.GET("/FeedHashApi", FeedHash.FeedHashApi)
-		}
-
 		Adminsite := v1.Group("/admin/")
 		Adminsite.Use(Middlewares.NeedAuthentication)
 		{
@@ -96,7 +90,7 @@ func BackendRouter(router *gin.Engine) {
 			Adminsite.GET("/Unban/:UserID", admin.UnbanUser)
 			Adminsite.GET("/Cacherefresh", admin.ManualUpdateFeed)
 			Adminsite.POST("/UserManagement", admin.UserManagement)
-			Adminsite.GET("/DumpUsers", admin.ListUsers)
+			Adminsite.GET("/GetUsers", admin.ListofUsers)
 			Adminsite.GET("/DelateAcount/:UserID", admin.DelateUser)
 		}
 		FileSystem := v1.Group("/Uplads/")
