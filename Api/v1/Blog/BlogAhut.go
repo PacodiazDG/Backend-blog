@@ -86,7 +86,7 @@ func (v *PostController) MyPosts(c *gin.Context) {
 	skip := c.Query("next")
 	if skip != "" {
 		next, err = strconv.ParseInt(skip, 10, 64)
-		if err != nil {
+		if err != nil || next < 0 {
 			c.AbortWithStatus(http.StatusNotAcceptable)
 			return
 		}

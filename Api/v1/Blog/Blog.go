@@ -45,7 +45,7 @@ func (v *PostController) FindPost(c *gin.Context) {
 	skip := c.Query("next")
 	if skip != "" {
 		next, err = strconv.ParseInt(skip, 10, 64)
-		if err != nil {
+		if err != nil || next < 0 {
 			c.AbortWithStatus(http.StatusNotAcceptable)
 			return
 		}
@@ -55,13 +55,16 @@ func (v *PostController) FindPost(c *gin.Context) {
 	if err == nil {
 		visibility = false
 	}
-	query = bson.M{"Title": bson.M{"$regex": primitive.Regex{Pattern: ".*" + search + ".*", Options: "gi"}}, "Visible": visibility, "Password": ""}
+	query = bson.M{"Title": bson.M{"$regex": primitive.Regex{
+		Pattern: ".*" + search + ".*", Options: "gi"}},
+		"Visible": visibility, "Password": ""}
 	Feed1, err := v.Conf.GetFeed(next, query)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
 	}
-	query = bson.M{"Description": bson.M{"$regex": primitive.Regex{Pattern: ".*" + search + ".*", Options: "gi"}}, "Visible": visibility, "Password": ""}
+	query = bson.M{"Description": bson.M{"$regex": primitive.Regex{Pattern: ".*" + search + ".*", Options: "gi"}},
+		"Visible": visibility, "Password": ""}
 	Feed2, err := v.Conf.GetFeed(next, query)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
@@ -88,7 +91,7 @@ func (v *PostController) Feed(c *gin.Context) {
 	skip := c.Query("next")
 	if skip != "" && skip != "0" || len(FastFeed) == 0 {
 		next, err = strconv.ParseInt(skip, 10, 64)
-		if err != nil {
+		if err != nil || next < 0 {
 			c.AbortWithStatus(http.StatusNotAcceptable)
 			return
 		}

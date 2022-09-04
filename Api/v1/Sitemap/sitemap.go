@@ -38,7 +38,7 @@ func SiteMapxml(c *gin.Context) {
 	c.Header("content-type", "text/xml")
 	if skip != "" {
 		next, err = strconv.ParseInt(skip, 10, 64)
-		if err != nil {
+		if err != nil || next < 0 {
 			c.AbortWithStatus(http.StatusNotAcceptable)
 			return
 		}
