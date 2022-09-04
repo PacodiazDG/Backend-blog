@@ -36,8 +36,7 @@ func newConnection() (*mongo.Client, error) {
 	}
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		Logs.WriteLogs(err)
-
+		Logs.WriteLogs(err, Logs.CriticalError)
 		panic(err)
 	}
 	client.Database("Blog")
@@ -53,6 +52,7 @@ func InitRedis() {
 	})
 	err := RedisCon.Set("key", "TestOk", 0).Err()
 	if err != nil {
+		Logs.WriteLogs(err, Logs.CriticalError)
 		panic(err)
 	}
 }

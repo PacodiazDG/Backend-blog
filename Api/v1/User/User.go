@@ -75,21 +75,20 @@ func Login(c *gin.Context) {
 	IPAddrUser(&data)
 	token, err := Security.CreateToken(TokenInfo)
 	if err != nil {
-		Logs.WriteLogs(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"Status": "token creation failed"})
 		return
 	}
 	var tpl bytes.Buffer
 	std1 := templateLoginAlert{Security.GetIP(c), Security.GetUserAgent(c), ""}
 	TemplateL, err := template.ParseFiles("./Templates/Mail/Login.tmpl")
 	if err != nil {
-		Logs.WriteLogs(err)
-		c.JSON(http.StatusOK, gin.H{"Token": "Bearer " + token})
+		Logs.WriteLogs(err, Logs.MediumError)
+		c.JSON(http.StatusOK, gin.H{"Status": "Internal Server Error"})
 		return
 	}
 	if err = TemplateL.Execute(&tpl, std1); err != nil {
-		Logs.WriteLogs(err)
-		c.JSON(http.StatusOK, gin.H{"Token": "Bearer " + token})
+		Logs.WriteLogs(err, Logs.MediumError)
+		c.JSON(http.StatusOK, gin.H{"Status": "Internal Server Error"})
 		return
 	}
 	SMTPM.Send([]string{u.Email}, "Your account was accessed from a new IP address", tpl.String())
@@ -200,7 +199,7 @@ func Updateinfo(c *gin.Context) {
 func DelateaAccount(c *gin.Context) {
 	token, err := Security.VerifyToken(c.Request)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Details": "Token not valid"})
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid"})
 		return
 	}
 	jwtinfo := token.Claims.(jwt.MapClaims)
@@ -208,7 +207,7 @@ func DelateaAccount(c *gin.Context) {
 	var GetInfo BasicInfo
 	err = DelateAccount(IDuser)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Error code": err})
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Status": err})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -220,7 +219,7 @@ func DelateaAccount(c *gin.Context) {
 func UserInfo(c *gin.Context) {
 	token, err := Security.VerifyToken(c.Request)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Details": "Token not valid"})
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid"})
 		return
 	}
 	jwtinfo := token.Claims.(jwt.MapClaims)
@@ -240,14 +239,14 @@ func UserInfo(c *gin.Context) {
 func Iploggeduser(c *gin.Context) {
 	token, err := Security.VerifyToken(c.Request)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Details": "Token not valid"})
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid"})
 		return
 	}
 	jwtinfo := token.Claims.(jwt.MapClaims)
 	IDuser, _ := primitive.ObjectIDFromHex(jwtinfo["Userid"].(string))
 	ipaddres, err := GetIpaddes(IDuser)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Error": err})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": err})
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"Session": ipaddres,
@@ -258,7 +257,7 @@ func Iploggeduser(c *gin.Context) {
 func CheckToken(c *gin.Context) {
 	_, err := Security.VerifyToken(c.Request)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Details": "Token not valid"})
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid"})
 		return
 	}
 	c.AbortWithStatus(http.StatusOK)
@@ -272,11 +271,11 @@ func DelateSession(c *gin.Context) {
 		return
 	}
 	if RedisBackend.InsertBanidtoken(uudi) != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Details": "an error occurred trying to ban the token"})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "an error occurred trying to ban the token"})
 		return
 	}
 	if RemoveIPAddrUser(uudi) != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Details": "an error occurred trying to ban the token"})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "an error occurred trying to ban the token"})
 		return
 	}
 	c.AbortWithStatusJSON(http.StatusOK, gin.H{"Status": "uuid removed"})

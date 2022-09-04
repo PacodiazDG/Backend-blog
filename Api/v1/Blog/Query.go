@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	database "github.com/PacodiazDG/Backend-blog/Database"
+	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -25,13 +26,12 @@ func (v *Queryconf) GetFeed(id int64, query bson.M) ([]FeedStrcture, error) {
 	var results []FeedStrcture
 	cursor, err := collection.Find(context.Background(), query, findOptions)
 	if err != nil {
-		return []FeedStrcture{}, err
+		Logs.WriteLogs(err, Logs.LowError)
+		return []FeedStrcture{}, errors.New("internal server error")
 	}
 	if err = cursor.All(context.Background(), &results); err != nil {
-		return []FeedStrcture{}, err
-	}
-	if len(results) == 0 {
-		return []FeedStrcture{}, nil
+		Logs.WriteLogs(err, Logs.MediumError)
+		return []FeedStrcture{}, errors.New("internal server error")
 	}
 	return results, nil
 }
@@ -41,6 +41,7 @@ func (v *Queryconf) ModelInsertPost(result *PostSimpleStruct) (*mongo.InsertOneR
 	collection := *database.Database.Collection(v.Collection)
 	info, err := collection.InsertOne(context.Background(), result)
 	if err != nil {
+		Logs.WriteLogs(err, Logs.LowError)
 		return nil, err
 	}
 	return info, nil
@@ -52,7 +53,13 @@ func (v *Queryconf) ModelGetArticle(objectId primitive.ObjectID) (PostSimpleStru
 	var result PostSimpleStruct
 	err := collection.FindOne(context.Background(), bson.M{"_id": objectId}).Decode(&result)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return PostSimpleStruct{}, errors.New("post not found")
+		}
 		return PostSimpleStruct{}, errors.New("post not found")
+	}
+	if len(result) == 0 {
+
 	}
 	return result, nil
 }
