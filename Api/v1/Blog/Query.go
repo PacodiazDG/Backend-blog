@@ -58,9 +58,6 @@ func (v *Queryconf) ModelGetArticle(objectId primitive.ObjectID) (PostSimpleStru
 		}
 		return PostSimpleStruct{}, errors.New("post not found")
 	}
-	if len(result) == 0 {
-
-	}
 	return result, nil
 }
 
