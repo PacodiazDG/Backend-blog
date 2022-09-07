@@ -29,9 +29,7 @@ func salvetoken(Token, Email string) error {
 func RecoveryAccount(c *gin.Context) {
 	Email := c.PostForm("EmailRecovery")
 	if Email == "" || !validation.IsValidEmail(Email) {
-		c.AbortWithStatus(http.StatusNotAcceptable)
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, "invalid parameter")
-
+		c.AbortWithStatusJSON(http.StatusNotAcceptable, "invalid Email")
 		return
 	}
 	collection := *database.Database.Collection("Users")
