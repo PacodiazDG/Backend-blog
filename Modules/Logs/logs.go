@@ -16,16 +16,16 @@ func WriteLogs(errors error, severity int) {
 		makefile(("./error-severity-" + (strconv.Itoa(severity)) + ".log"))
 		panic(err)
 	}
-	defer f.Close()
 	currentTime := time.Now()
 	Log := currentTime.Format("2006.01.02 15:04:05") + " " + s + "\n"
 	if _, err := f.WriteString(Log); err != nil {
 		panic(err)
 	}
+	f.Close()
 }
 
 func makefile(name string) {
-	err := os.WriteFile(name, nil, 0644)
+	err := os.WriteFile(name, nil, 0600)
 	if err != nil {
 		fmt.Printf("Unable to write file: %v", err)
 	}

@@ -43,7 +43,6 @@ func SiteMapxml(c *gin.Context) {
 			return
 		}
 	} else {
-		//Return map Of Backend
 		CountDoc, err := collection.CountDocuments(c.Request.Context(), bson.M{"Visible": true})
 		if err != nil {
 			panic(err)
@@ -51,7 +50,6 @@ func SiteMapxml(c *gin.Context) {
 		c.String(http.StatusOK, siteMapLoc(CountDoc))
 		return
 	}
-	//Return siteMap
 	findOptions.SetSkip(next)
 	cursor, err := collection.Find(context.Background(), bson.M{"Visible": true}, findOptions)
 	if err != nil {
