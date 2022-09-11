@@ -5,10 +5,11 @@ import (
 	"net/smtp"
 	"os"
 
+	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
 	"github.com/PacodiazDG/Backend-blog/Modules/validation"
 )
 
-//ValidadteEmailArray verifica
+// ValidadteEmailArray verifica
 func ValidadteEmailArray(email []string) bool {
 	for _, value := range email {
 		if !validation.IsValidEmail(value) {
@@ -18,7 +19,7 @@ func ValidadteEmailArray(email []string) bool {
 	return true
 }
 
-//Send envia el correo uno por uno a partir de un array
+// Send envia el correo uno por uno a partir de un array
 func Send(to []string, Subject, text string) {
 	for _, s := range to {
 		if validation.IsValidEmail(s) {
@@ -47,6 +48,7 @@ func SendEmail(to []string, Subject, text string) {
 		"\n")
 	err := smtp.SendMail(SMTPHost+":"+SMTPport, auth, SMTPUsername, to, msgs)
 	if err != nil {
+		Logs.WriteLogs(err, Logs.MediumError)
 		panic(err)
 	}
 }

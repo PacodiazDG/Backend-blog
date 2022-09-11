@@ -39,7 +39,7 @@ func Login(c *gin.Context) {
 	collection := *database.Database.Collection("Users")
 	err = collection.FindOne(context.TODO(), bson.M{"Email": u.Email}).Decode(&result)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, "User not Found")
+		c.AbortWithStatusJSON(http.StatusNotFound, "you entered an incorrect username or password ")
 		return
 	}
 	if result.Banned {
@@ -53,7 +53,7 @@ func Login(c *gin.Context) {
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(u.Password))
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, "Password not Found")
+		c.AbortWithStatusJSON(http.StatusNotFound, "you entered an incorrect username or password ")
 		return
 	}
 	TokenInfo := Security.TokenStrocture{
