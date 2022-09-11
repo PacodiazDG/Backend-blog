@@ -51,7 +51,7 @@ func (v *PostController) FindPost(c *gin.Context) {
 		}
 	}
 	err = Security.TokenValid(c.Request)
-	var visibility bool = true
+	var visibility = true
 	if err == nil {
 		visibility = false
 	}
