@@ -27,6 +27,7 @@ func SetTopPost() {
 	Blogs.SetCollection("Post")
 	info, err := Blogs.SetTop()
 	if err != nil {
+		Logs.WriteLogs(err, Logs.HardError)
 		panic(err)
 	}
 	CacheRamPost = &info
@@ -37,7 +38,7 @@ func SetTopFeed() {
 	Blogs.SetCollection("Post")
 	info, err := Blogs.FeedFast()
 	if err != nil {
-		Logs.WriteLogs(err)
+		Logs.WriteLogs(err, Logs.HardError)
 		return
 	}
 	FastFeed = info

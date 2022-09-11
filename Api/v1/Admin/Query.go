@@ -7,6 +7,7 @@ import (
 
 	"github.com/PacodiazDG/Backend-blog/Api/v1/User"
 	database "github.com/PacodiazDG/Backend-blog/Database"
+	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -23,6 +24,7 @@ func ListUsers(next int64, username string) ([]User.BasicInfo, error) {
 		return nil, errors.New("error in database")
 	}
 	if err = results.All(context.Background(), &Listofusers); err != nil {
+		Logs.WriteLogs(err, Logs.LowError)
 		return nil, errors.New("error in database")
 	}
 	return Listofusers, nil

@@ -3,6 +3,7 @@ package admin
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Blog"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/User"
@@ -26,6 +27,7 @@ func BanUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": "ID type no valid."})
 		return
 	}
+	Reason := c.DefaultQuery("Reason", "Other")
 	result, err := User.UpdateUserInfo(IDuser, &User.UserStrcture{Banned: true})
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": err.Error()})
@@ -35,7 +37,14 @@ func BanUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Status": "User Not found"})
 		return
 	}
-	err = RedisBackend.SetBan(c.Param("UserID"))
+	err = RedisBackend.SetBan(RedisBackend.User{
+		ID:           IDuser,
+		Blocked:      true,
+		Reason:       "Banned",
+		Date:         time.Now(),
+		LoginAttempt: 0,
+		Details:      Reason,
+	})
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, gin.H{"Status": "Banned from db"})
 		return
@@ -88,7 +97,7 @@ func UnbanUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Status": "User Not found"})
 		return
 	}
-	err = RedisBackend.RemoveBan(c.Param("UserID"))
+	err = RedisBackend.RemoveBan(IDuser)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, gin.H{"Status": "Banned from db"})
 		return
@@ -191,7 +200,7 @@ func ListofUsers(c *gin.Context) {
 	skip := c.Query("next")
 	if skip != "" {
 		next, err = strconv.ParseInt(skip, 10, 64)
-		if err != nil {
+		if err != nil || next < 0 {
 			c.AbortWithStatus(http.StatusNotAcceptable)
 			return
 		}

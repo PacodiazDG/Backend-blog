@@ -16,7 +16,7 @@ func AutoSetCacheTop() {
 		defer func() {
 			if r := recover(); r != nil {
 				color.Red("Critical Error:")
-				Logs.WriteLogs(r.(error))
+				Logs.WriteLogs(r.(error), Logs.CriticalError)
 				AutoSetCacheTop()
 			}
 		}()

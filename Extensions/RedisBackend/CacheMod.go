@@ -1,8 +1,11 @@
 package RedisBackend
 
 import (
+	"encoding/json"
+
 	database "github.com/PacodiazDG/Backend-blog/Database"
 	"github.com/go-redis/redis"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // InsertFeedCache Get if any token is banned
@@ -15,25 +18,29 @@ func CheckBan(id, idtoken string) bool {
 	return err != redis.Nil
 }
 
-//SetBan Inserta baneo a redis
-func SetBan(id string) error {
-	err := database.RedisCon.Set("IDBaned"+id, "True", 0).Err()
+// SetBan Inserta baneo a redis
+func SetBan(Info User) error {
+	JsonUser, err := json.Marshal(Info)
+	if err != nil {
+		return err
+	}
+	err = database.RedisCon.Set(Info.ID.Hex(), JsonUser, 0).Err()
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-//SetBan Inserta baneo a redis
-func RemoveBan(id string) error {
-	err := database.RedisCon.Del(("IDBaned" + id)).Err()
+// SetBan Inserta baneo a redis
+func RemoveBan(id primitive.ObjectID) error {
+	err := database.RedisCon.Del(id.Hex()).Err()
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-//GetFeedCache Returns the feed cache values
+// GetFeedCache Returns the feed cache values
 func GetFeedCache(IDfeed string) string {
 	val, err := database.RedisCon.Get("feed" + IDfeed).Result()
 	if err != nil {
