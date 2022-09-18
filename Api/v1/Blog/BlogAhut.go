@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
 	"github.com/PacodiazDG/Backend-blog/Modules/Security"
 	"github.com/PacodiazDG/Backend-blog/Modules/validation"
 	"github.com/gin-gonic/gin"
@@ -141,10 +142,10 @@ func (v *PostController) UpdatePost(c *gin.Context) {
 }
 
 // Subir imagenes al servidor
-func (PostController) FileSystemImage(c *gin.Context) {
+func (PostController) UploadImage(c *gin.Context) {
 	_, err := Security.CheckTokenPermissions([]rune{Security.UploadFiles}, c.Request)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token Not valid"})
 		return
 	}
 	file, err := c.FormFile("file")
@@ -154,11 +155,13 @@ func (PostController) FileSystemImage(c *gin.Context) {
 	}
 	infofile, err := file.Open()
 	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		Logs.WriteLogs(err, Logs.LowError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "No file is received"})
 		return
 	}
 	byteContainer, err := io.ReadAll(infofile)
 	if err != nil {
+		Logs.WriteLogs(err, Logs.LowError)
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error reading file"})
 		return
 	}

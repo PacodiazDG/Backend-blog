@@ -5,7 +5,6 @@ import (
 
 	admin "github.com/PacodiazDG/Backend-blog/Api/v1/Admin"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Blog"
-	"github.com/PacodiazDG/Backend-blog/Api/v1/Fileupload"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/Sitemap"
 	"github.com/PacodiazDG/Backend-blog/Api/v1/User"
 	"github.com/PacodiazDG/Backend-blog/Middlewares"
@@ -21,7 +20,7 @@ func index(c *gin.Context) {
 func BackendRouter(router *gin.Engine) {
 	router.GET("/sitemap.xml", Sitemap.SiteMapxml)
 	router.GET("/", index)
-	router.GET("/Image/blog/:ImageName", Fileupload.BlogImageUpload)
+	//router.GET("/Image/blog/:ImageName", Fileupload.BlogImageUpload)
 	router.Static("/assets/", "./Serverfiles")
 	router.LoadHTMLGlob("Templates/www/*")
 	router.HEAD("/ping", func(c *gin.Context) {
@@ -40,7 +39,7 @@ func BackendRouter(router *gin.Engine) {
 				BlogAdminRouter.POST("/InsetPost", Blogs.InsertPost)
 				BlogAdminRouter.DELETE("/DelatePost/:ObjectId", Blogs.DelatePost)
 				BlogAdminRouter.PUT("/UpdatePost/:ObjectId", Blogs.UpdatePost)
-				BlogAdminRouter.POST("/PostFiles", Blogs.FileSystemImage)
+				BlogAdminRouter.POST("/UploadImage", Blogs.UploadImage)
 				BlogAdminRouter.GET("/GetMyPost", Blogs.MyPosts)
 			}
 			BlogRouter.GET("/p/:ObjectId", Blogs.Post)
