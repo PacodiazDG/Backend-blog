@@ -159,12 +159,12 @@ func (v *PostController) Visibility(c *gin.Context) {
 	}
 	VisibleStatus, err := strconv.ParseBool(c.Query("visible"))
 	if err != nil {
-		c.AbortWithStatus(http.StatusNotAcceptable)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": "visible is type bool"})
 		return
 	}
 	PostID, err := primitive.ObjectIDFromHex(c.Param("ObjectId"))
 	if err != nil {
-		c.AbortWithStatus(http.StatusNotAcceptable)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": "ObjectID is not valid"})
 		return
 	}
 	ProcessData := PostSimpleStruct{
@@ -172,10 +172,10 @@ func (v *PostController) Visibility(c *gin.Context) {
 	}
 	_, err = v.Conf.ModelUpdate(&ProcessData, PostID)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"": ""})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
 	}
-	c.JSON(http.StatusOK, "ok")
+	c.JSON(http.StatusOK, gin.H{"Status": "Post Updated"})
 }
 
 // Retorna los post mas vistos
