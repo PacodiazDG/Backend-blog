@@ -96,11 +96,8 @@ func (v *PostController) Feed(c *gin.Context) {
 			return
 		}
 	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"Post": FastFeed,
-		})
+		c.JSON(http.StatusOK, gin.H{"Post": FastFeed})
 		return
-
 	}
 	query := bson.M{}
 	err = Security.TokenValid(c.Request)
@@ -119,7 +116,6 @@ func (v *PostController) Feed(c *gin.Context) {
 
 // Post retorna el post solicitado
 func (v *PostController) Post(c *gin.Context) {
-	CacheAvailable := false
 	var Cache PostSimpleStruct
 	PostID, err := primitive.ObjectIDFromHex(c.Param("ObjectId"))
 	if err != nil {
@@ -129,18 +125,13 @@ func (v *PostController) Post(c *gin.Context) {
 	for i := range *CacheRamPost {
 		if (*CacheRamPost)[i].ID == c.Param("ObjectId") {
 			Cache = (*CacheRamPost)[i]
-			CacheAvailable = true
-			break
+			c.AbortWithStatusJSON(http.StatusOK, gin.H{
+				"Post":        Cache,
+				"Performance": true,
+			})
+			go v.Conf.Addviews(PostID)
+			return
 		}
-
-	}
-	if CacheAvailable {
-		c.AbortWithStatusJSON(http.StatusOK, gin.H{
-			"Post":        Cache,
-			"Performance": true,
-		})
-		go v.Conf.Addviews(PostID)
-		return
 	}
 	result, err := (v.Conf).ModelGetArticle(PostID)
 	if err != nil {
