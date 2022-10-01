@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
 	"github.com/gin-gonic/gin"
 	"github.com/nfnt/resize"
 )
@@ -25,17 +26,19 @@ func convertImgToBytes(m image.Image) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// deprecated
 func BlogImageUpload(c *gin.Context) {
 	file := filepath.Clean(c.Param("ImageName"))
 	dat, err := os.Open("./Serverfiles/blog/" + file)
 	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
+		Logs.WriteLogs(err, Logs.HardError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
 	}
 	rs := c.Query("rs")
 	img, _, err := image.Decode(dat)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Status": "image not decoded"})
+		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Status": "Image not decoded"})
 		return
 	}
 	intVar, err := strconv.Atoi(rs)
@@ -48,7 +51,8 @@ func BlogImageUpload(c *gin.Context) {
 	if rs != "" && intVar <= 2400 {
 		imagebyte, err := convertImgToBytes(resize.Resize(uint(intVar), 0, img, resize.Lanczos3))
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": err.Error()})
+			Logs.WriteLogs(err, Logs.LowError)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Image resizing error"})
 			return
 		}
 		c.Data(http.StatusOK, "image/png", imagebyte)
