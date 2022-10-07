@@ -8,8 +8,8 @@ import (
 	"regexp"
 	"strconv"
 	"time"
-    "github.com/PacodiazDG/Backend-blog/modules/logs"
 
+	"github.com/PacodiazDG/Backend-blog/modules/logs"
 	"github.com/PacodiazDG/Backend-blog/modules/security"
 	"github.com/PacodiazDG/Backend-blog/modules/validation"
 	"github.com/gin-gonic/gin"
@@ -17,6 +17,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+// InsertPost
 func (v *PostController) InsertPost(c *gin.Context) {
 	jwtinfo, err := security.CheckTokenPermissions([]rune{security.PublishPost}, c.Request)
 	if err != nil {
@@ -182,7 +183,7 @@ func (PostController) UploadImage(c *gin.Context) {
 
 // Initialize Inizializa un post o un draft
 func (v *PostController) Initialize(c *gin.Context) {
-	jwtinfo, err := Security.CheckTokenPermissions([]rune{Security.PublishPost}, c.Request)
+	jwtinfo, err := security.CheckTokenPermissions([]rune{security.PublishPost}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
@@ -190,20 +191,18 @@ func (v *PostController) Initialize(c *gin.Context) {
 	Initialize := PostSimpleStruct{
 		Title:       "New post",
 		Content:     "write your content here",
-		Title:       "New post",
-		Content:     "write yourcontent here",
 		Tags:        []string{"Example"},
-		Date:        time.New(),
-		Author:      jwtnfo["Userid"].(string),
+		Date:        time.Now(),
+		Author:      jwtinfo["Userid"].(string),
 		Visible:     false,
 		Imagen:      "",
-		escription: "write your description here",
+		Description: "write your description here",
 		Views:       0,
 	}
 	Infomodel, err := v.Conf.ModelInsertPost(&Initialize)
-	if err = nil {
-		.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status:": "An error occurred initializing the post"})
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status:": "An error occurred initializing the post"})
 		return
-	
+	}
 	c.JSON(http.StatusOK, gin.H{"Status": Infomodel.InsertedID})
 }
