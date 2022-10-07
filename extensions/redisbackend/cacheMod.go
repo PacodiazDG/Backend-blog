@@ -3,7 +3,7 @@ package redisbackend
 import (
 	"encoding/json"
 
-	database "github.com/PacodiazDG/Backend-blog/database"
+	"github.com/PacodiazDG/Backend-blog/database"
 	"github.com/go-redis/redis"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
