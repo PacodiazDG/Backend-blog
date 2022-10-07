@@ -1,9 +1,9 @@
-package User
+package user
 
 import (
 	"time"
 
-	"github.com/PacodiazDG/Backend-blog/Modules/validation"
+	"github.com/PacodiazDG/Backend-blog/modules/validation"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -33,7 +33,7 @@ type BasicInfo struct {
 	Banned      bool   `bson:"Banned,omitempty"`
 }
 
-//IpAddrUser
+// IpAddrUser
 type IpAddrUser struct {
 	IDuser    primitive.ObjectID `bson:"IDuser"`
 	Date      time.Time          `bson:"Date"`
@@ -43,23 +43,23 @@ type IpAddrUser struct {
 	Uuidtoken string             `bson:"Uuidtoken"`
 }
 
-//LoginRequestStruct
+// LoginRequestStruct
 type LoginRequestStruct struct {
 	ID       uint64 `json:"id"`
 	Email    string `json:"Email"`
 	Password string `json:"Password"`
 }
 
-//Data
+// Data
 type Data []UserStrcture
 
-//RecoveryAccountStrcture
+// RecoveryAccountStrcture
 type RecoveryAccountStrcture struct {
 	Name     string
 	UrlToken string
 }
 
-//IsValidUserInfo
+// IsValidUserInfo
 func IsValidUserInfo(Info *UserStrcture) bool {
 	if !validation.IsValidEmail(Info.Email) {
 		return false

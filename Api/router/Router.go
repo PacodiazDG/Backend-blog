@@ -3,11 +3,11 @@ package router
 import (
 	"net/http"
 
-	admin "github.com/PacodiazDG/Backend-blog/Api/v1/Admin"
-	"github.com/PacodiazDG/Backend-blog/Api/v1/Blog"
-	"github.com/PacodiazDG/Backend-blog/Api/v1/Sitemap"
-	"github.com/PacodiazDG/Backend-blog/Api/v1/User"
-	"github.com/PacodiazDG/Backend-blog/Middlewares"
+	"github.com/PacodiazDG/Backend-blog/api/v1/admin"
+	"github.com/PacodiazDG/Backend-blog/api/v1/blog"
+	"github.com/PacodiazDG/Backend-blog/api/v1/sitemap"
+	"github.com/PacodiazDG/Backend-blog/api/v1/user"
+	Middlewares "github.com/PacodiazDG/Backend-blog/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,7 +18,7 @@ func index(c *gin.Context) {
 }
 
 func BackendRouter(router *gin.Engine) {
-	router.GET("/sitemap.xml", Sitemap.SiteMapxml)
+	router.GET("/sitemap.xml", sitemap.SiteMapxml)
 	router.GET("/", index)
 	// router.GET("/Image/blog/:ImageName", Fileupload.BlogImageUpload)
 	router.Static("/assets/", "./Serverfiles")
@@ -31,7 +31,7 @@ func BackendRouter(router *gin.Engine) {
 	{
 		BlogRouter := v1.Group("/blog")
 		{
-			Blogs := Blog.InitControllerPost()
+			Blogs := blog.InitControllerPost()
 			Blogs.SetCollection("Post")
 			BlogAdminRouter := BlogRouter.Group("/auth")
 			BlogAdminRouter.Use(Middlewares.NeedAuthentication)
@@ -51,7 +51,7 @@ func BackendRouter(router *gin.Engine) {
 		DraftsRouter := v1.Group("/drafts")
 		{
 			DraftsRouter.Use(Middlewares.NeedAuthentication)
-			Drafts := Blog.InitControllerPost()
+			Drafts := blog.InitControllerPost()
 			Drafts.SetCollection("Drafts")
 			DraftsRouter.POST("/InsetPost", Drafts.InsertPost)
 			DraftsRouter.DELETE("/DelatePost/:ObjectId", Drafts.DelatePost)
@@ -67,24 +67,24 @@ func BackendRouter(router *gin.Engine) {
 			MyUserAhut := MyUser.Group("/Ahut")
 			{
 				MyUserAhut.Use(Middlewares.NeedAuthentication)
-				MyUserAhut.GET("/My", User.UserInfo)
-				MyUserAhut.GET("/Iploggeduser", User.Iploggeduser)
-				MyUserAhut.GET("/DelateAccount", User.DelateaAccount)
-				MyUserAhut.PUT("/My", User.Updateinfo)
-				MyUserAhut.GET("/removeToken/:uudi", User.DelateSession)
+				MyUserAhut.GET("/My", user.UserInfo)
+				MyUserAhut.GET("/Iploggeduser", user.Iploggeduser)
+				MyUserAhut.GET("/DelateAccount", user.DelateaAccount)
+				MyUserAhut.PUT("/My", user.Updateinfo)
+				MyUserAhut.GET("/removeToken/:uudi", user.DelateSession)
 				MyUserAhut.GET("/CheckToken", func(c *gin.Context) {
 					c.AbortWithStatus(http.StatusOK)
 				})
 			}
-			MyUser.POST("/login", User.Login)
-			MyUser.POST("/RecoveryAccount", User.RecoveryAccount)
-			MyUser.GET("/RecoveryAccount/:Token", User.ValidateRecoveryAccount)
+			MyUser.POST("/login", user.Login)
+			MyUser.POST("/RecoveryAccount", user.RecoveryAccount)
+			MyUser.GET("/RecoveryAccount/:Token", user.ValidateRecoveryAccount)
 		}
 		Adminsite := v1.Group("/admin/")
 		Adminsite.Use(Middlewares.NeedAuthentication)
 		{
-			Adminsite.POST("/CreateAccount", User.CreateAccount)
-			Adminsite.POST("/BanToken", User.Updateinfo)
+			Adminsite.POST("/CreateAccount", user.CreateAccount)
+			Adminsite.POST("/BanToken", user.Updateinfo)
 			Adminsite.GET("/Ban/:UserID", admin.BanUser)
 			Adminsite.GET("/Unban/:UserID", admin.UnbanUser)
 			Adminsite.GET("/Cacherefresh", admin.ManualUpdateFeed)

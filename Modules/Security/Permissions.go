@@ -1,6 +1,6 @@
-package Security
+package security
 
-import "github.com/PacodiazDG/Backend-blog/Modules/validation"
+import "github.com/PacodiazDG/Backend-blog/modules/validation"
 
 // Permision Const
 const (

@@ -1,4 +1,4 @@
-package User
+package user
 
 import (
 	"bytes"
@@ -8,9 +8,9 @@ import (
 	"os"
 	"time"
 
-	database "github.com/PacodiazDG/Backend-blog/Database"
-	"github.com/PacodiazDG/Backend-blog/Modules/Security"
-	"github.com/PacodiazDG/Backend-blog/Modules/validation"
+	database "github.com/PacodiazDG/Backend-blog/database"
+	"github.com/PacodiazDG/Backend-blog/modules/security"
+	"github.com/PacodiazDG/Backend-blog/modules/validation"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -40,7 +40,7 @@ func RecoveryAccount(c *gin.Context) {
 		return
 	}
 
-	token, err := Security.GenerateRandomString(50)
+	token, err := security.GenerateRandomString(50)
 	if err != nil {
 		panic(err)
 	}

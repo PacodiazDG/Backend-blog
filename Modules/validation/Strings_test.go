@@ -3,7 +3,7 @@ package validation_test
 import (
 	"testing"
 
-	"github.com/PacodiazDG/Backend-blog/Modules/validation"
+	"github.com/PacodiazDG/Backend-blog/modules/validation"
 )
 
 type SliceStringContainsTest struct {

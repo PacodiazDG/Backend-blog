@@ -1,4 +1,4 @@
-package Fileupload
+package fileupload
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
+	logs "github.com/PacodiazDG/Backend-blog/modules/logs"
 	"github.com/gin-gonic/gin"
 	"github.com/nfnt/resize"
 )
@@ -31,7 +31,7 @@ func BlogImageUpload(c *gin.Context) {
 	file := filepath.Clean(c.Param("ImageName"))
 	dat, err := os.Open("./Serverfiles/blog/" + file)
 	if err != nil {
-		Logs.WriteLogs(err, Logs.HardError)
+		logs.WriteLogs(err, logs.HardError)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
 	}
@@ -51,7 +51,7 @@ func BlogImageUpload(c *gin.Context) {
 	if rs != "" && intVar <= 2400 {
 		imagebyte, err := convertImgToBytes(resize.Resize(uint(intVar), 0, img, resize.Lanczos3))
 		if err != nil {
-			Logs.WriteLogs(err, Logs.LowError)
+			logs.WriteLogs(err, logs.LowError)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Image resizing error"})
 			return
 		}

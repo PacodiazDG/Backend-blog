@@ -1,4 +1,4 @@
-package User
+package user
 
 import (
 	"bytes"
@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	database "github.com/PacodiazDG/Backend-blog/Database"
-	"github.com/PacodiazDG/Backend-blog/Extensions/RedisBackend"
-	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
-	"github.com/PacodiazDG/Backend-blog/Modules/Security"
-	"github.com/PacodiazDG/Backend-blog/Modules/validation"
-	"github.com/PacodiazDG/Backend-blog/SMTPM"
+	database "github.com/PacodiazDG/Backend-blog/database"
+	"github.com/PacodiazDG/Backend-blog/extensions/redisbackend"
+	logs "github.com/PacodiazDG/Backend-blog/modules/logs"
+	"github.com/PacodiazDG/Backend-blog/modules/security"
+	"github.com/PacodiazDG/Backend-blog/modules/validation"
+	"github.com/PacodiazDG/Backend-blog/smtpm"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
@@ -56,7 +56,7 @@ func Login(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Status": "you entered an incorrect username or password "})
 		return
 	}
-	TokenInfo := Security.TokenStrocture{
+	TokenInfo := security.TokenStrocture{
 		Email:       result.Email,
 		ID:          (result.ID),
 		Permissions: result.Permissions,
@@ -66,39 +66,39 @@ func Login(c *gin.Context) {
 	t := time.Now()
 	data := IpAddrUser{
 		IDuser:    objID,
-		IpAddrs:   Security.GetIP(c),
+		IpAddrs:   security.GetIP(c),
 		DateOut:   t.Local().Add(time.Hour * time.Duration(168)),
 		Date:      t,
 		UserAgent: c.Request.Header.Get("user-agent"),
 		Uuidtoken: uuidtoken.String(),
 	}
 	IPAddrUser(&data)
-	token, err := Security.CreateToken(TokenInfo)
+	token, err := security.CreateToken(TokenInfo)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"Status": "token creation failed"})
 		return
 	}
 	var tpl bytes.Buffer
-	std1 := templateLoginAlert{Security.GetIP(c), Security.GetUserAgent(c), ""}
+	std1 := templateLoginAlert{security.GetIP(c), security.GetUserAgent(c), ""}
 	TemplateL, err := template.ParseFiles("./Templates/Mail/Login.tmpl")
 	if err != nil {
-		Logs.WriteLogs(err, Logs.MediumError)
+		logs.WriteLogs(err, logs.MediumError)
 		c.JSON(http.StatusOK, gin.H{"Status": "Internal Server Error"})
 		return
 	}
 	if err = TemplateL.Execute(&tpl, std1); err != nil {
-		Logs.WriteLogs(err, Logs.MediumError)
+		logs.WriteLogs(err, logs.MediumError)
 		c.JSON(http.StatusOK, gin.H{"Status": "Internal Server Error"})
 		return
 	}
-	SMTPM.Send([]string{u.Email}, "Your account was accessed from a new IP address", tpl.String())
-	// Security.BanedToken(token)
+	smtpm.Send([]string{u.Email}, "Your account was accessed from a new IP address", tpl.String())
+	// security.BanedToken(token)
 	c.JSON(http.StatusOK, gin.H{"Token": "Bearer " + token})
 }
 
 func CreateAccount(c *gin.Context) {
 	var result UserStrcture
-	_, err := Security.CheckTokenPermissions([]rune{Security.UserManagement}, c.Request)
+	_, err := security.CheckTokenPermissions([]rune{security.UserManagement}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
@@ -131,7 +131,7 @@ func CreateAccount(c *gin.Context) {
 	if len(result.Permissions) < 9 {
 		result.Permissions += strings.Repeat("_", 9-len(result.Permissions))
 	}
-	if !Security.ValidationPermissions(result.Permissions) {
+	if !security.ValidationPermissions(result.Permissions) {
 		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Status": "Permission not valid"})
 		return
 	}
@@ -157,7 +157,7 @@ func Updateinfo(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid json provided")
 		return
 	}
-	token, err := Security.VerifyToken(c.Request)
+	token, err := security.VerifyToken(c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token Not valid"})
 		return
@@ -197,7 +197,7 @@ func Updateinfo(c *gin.Context) {
 }
 
 func DelateaAccount(c *gin.Context) {
-	token, err := Security.VerifyToken(c.Request)
+	token, err := security.VerifyToken(c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid"})
 		return
@@ -217,7 +217,7 @@ func DelateaAccount(c *gin.Context) {
 }
 
 func UserInfo(c *gin.Context) {
-	token, err := Security.VerifyToken(c.Request)
+	token, err := security.VerifyToken(c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid"})
 		return
@@ -237,7 +237,7 @@ func UserInfo(c *gin.Context) {
 }
 
 func Iploggeduser(c *gin.Context) {
-	token, err := Security.VerifyToken(c.Request)
+	token, err := security.VerifyToken(c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid"})
 		return
@@ -255,7 +255,7 @@ func Iploggeduser(c *gin.Context) {
 }
 
 func CheckToken(c *gin.Context) {
-	_, err := Security.VerifyToken(c.Request)
+	_, err := security.VerifyToken(c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid"})
 		return
@@ -270,7 +270,7 @@ func DelateSession(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{"Status": "uuid is not valid"})
 		return
 	}
-	if RedisBackend.InsertBanidtoken(uudi) != nil {
+	if redisbackend.InsertBanidtoken(uudi) != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "an error occurred trying to ban the token"})
 		return
 	}

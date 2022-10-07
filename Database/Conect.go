@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
+	"github.com/PacodiazDG/Backend-blog/modules/logs"
 	"github.com/go-redis/redis"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -36,7 +36,7 @@ func newConnection() (*mongo.Client, error) {
 	}
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		Logs.WriteLogs(err, Logs.CriticalError)
+		logs.WriteLogs(err, logs.CriticalError)
 		panic(err)
 	}
 	client.Database("Blog")
@@ -52,7 +52,7 @@ func InitRedis() {
 	})
 	err := RedisCon.Set("key", "TestOk", 0).Err()
 	if err != nil {
-		Logs.WriteLogs(err, Logs.CriticalError)
+		logs.WriteLogs(err, logs.CriticalError)
 		panic(err)
 	}
 }

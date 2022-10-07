@@ -1,10 +1,10 @@
-package User
+package user
 
 import (
 	"context"
 	"errors"
 
-	database "github.com/PacodiazDG/Backend-blog/Database"
+	database "github.com/PacodiazDG/Backend-blog/database"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gopkg.in/mgo.v2/bson"

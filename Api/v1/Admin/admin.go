@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/PacodiazDG/Backend-blog/Api/v1/Blog"
-	"github.com/PacodiazDG/Backend-blog/Api/v1/User"
-	"github.com/PacodiazDG/Backend-blog/Extensions/RedisBackend"
-	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
-	"github.com/PacodiazDG/Backend-blog/Modules/Security"
+	"github.com/PacodiazDG/Backend-blog/api/v1/blog"
+	"github.com/PacodiazDG/Backend-blog/api/v1/user"
+	"github.com/PacodiazDG/Backend-blog/extensions/redisbackend"
+	logs "github.com/PacodiazDG/Backend-blog/modules/logs"
+	"github.com/PacodiazDG/Backend-blog/modules/security"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
@@ -17,7 +17,7 @@ import (
 
 // BanUser
 func BanUser(c *gin.Context) {
-	_, err := Security.CheckTokenPermissions([]rune{Security.BanUser}, c.Request)
+	_, err := security.CheckTokenPermissions([]rune{security.BanUser}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
@@ -28,7 +28,7 @@ func BanUser(c *gin.Context) {
 		return
 	}
 	Reason := c.DefaultQuery("Reason", "Other")
-	result, err := User.UpdateUserInfo(IDuser, &User.UserStrcture{Banned: true})
+	result, err := user.UpdateUserInfo(IDuser, &user.UserStrcture{Banned: true})
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": err.Error()})
 		return
@@ -37,7 +37,7 @@ func BanUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Status": "User Not found"})
 		return
 	}
-	err = RedisBackend.SetBan(RedisBackend.User{
+	err = redisbackend.SetBan(redisbackend.User{
 		ID:           IDuser,
 		Blocked:      true,
 		Reason:       "Banned",
@@ -55,7 +55,7 @@ func BanUser(c *gin.Context) {
 // DelateUser
 
 func DelateUser(c *gin.Context) {
-	_, err := Security.CheckTokenPermissions([]rune{Security.UserManagement}, c.Request)
+	_, err := security.CheckTokenPermissions([]rune{security.UserManagement}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
@@ -65,7 +65,7 @@ func DelateUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": "ID type no valid."})
 		return
 	}
-	err = User.DelateAccount(IDuser)
+	err = user.DelateAccount(IDuser)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": err.Error()})
 		return
@@ -75,12 +75,12 @@ func DelateUser(c *gin.Context) {
 
 // UnbanUser
 func UnbanUser(c *gin.Context) {
-	_, err := Security.CheckTokenPermissions([]rune{Security.BanUser}, c.Request)
+	_, err := security.CheckTokenPermissions([]rune{security.BanUser}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
-	Info := User.UserStrcture{
+	Info := user.UserStrcture{
 		Banned: false,
 	}
 	IDuser, err := primitive.ObjectIDFromHex(c.Param("UserID"))
@@ -88,7 +88,7 @@ func UnbanUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "ID type no valid."})
 		return
 	}
-	result, err := User.UpdateUserInfo(IDuser, &Info)
+	result, err := user.UpdateUserInfo(IDuser, &Info)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Error reported in logs"})
 		return
@@ -97,7 +97,7 @@ func UnbanUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Status": "User Not found"})
 		return
 	}
-	err = RedisBackend.RemoveBan(IDuser)
+	err = redisbackend.RemoveBan(IDuser)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, gin.H{"Status": "Banned from db"})
 		return
@@ -112,12 +112,12 @@ func ChangeAbout(c *gin.Context) {
 
 // ChangeInfoForUser Cambia
 func ChangeInfoForUser(c *gin.Context) {
-	_, err := Security.CheckTokenPermissions([]rune{Security.UserManagement}, c.Request)
+	_, err := security.CheckTokenPermissions([]rune{security.UserManagement}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
-	var Info User.UserStrcture
+	var Info user.UserStrcture
 	if err := c.ShouldBindJSON(&Info); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"Status": err.Error()})
 		return
@@ -128,7 +128,7 @@ func ChangeInfoForUser(c *gin.Context) {
 		return
 	}
 	Info.Permissions = ""
-	_, err = User.UpdateUserInfo(objID, &Info)
+	_, err = user.UpdateUserInfo(objID, &Info)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status: ": err.Error()})
 		return
@@ -137,12 +137,12 @@ func ChangeInfoForUser(c *gin.Context) {
 
 // UserManagement
 func UserManagement(c *gin.Context) {
-	_, err := Security.CheckTokenPermissions([]rune{Security.UserManagement}, c.Request)
+	_, err := security.CheckTokenPermissions([]rune{security.UserManagement}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
-	var result User.UserStrcture
+	var result user.UserStrcture
 	if err := c.ShouldBindJSON(&result); err != nil {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid json provided")
 		return
@@ -151,7 +151,7 @@ func UserManagement(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}
-	Info := User.UserStrcture{
+	Info := user.UserStrcture{
 		Username:    result.Username,
 		Password:    string(hashedPassword),
 		FirstName:   result.FirstName,
@@ -165,11 +165,11 @@ func UserManagement(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "ID type no valid."})
 		return
 	}
-	if User.EmailIsAvailable(result.Email) {
+	if user.EmailIsAvailable(result.Email) {
 		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Status": "This email is already being used."})
 		return
 	}
-	_, err = User.UpdateUserInfo(IDuser, &Info)
+	_, err = user.UpdateUserInfo(IDuser, &Info)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Status": err.Error()})
 		return
@@ -179,19 +179,19 @@ func UserManagement(c *gin.Context) {
 
 // ManualUpdateFeed
 func ManualUpdateFeed(c *gin.Context) {
-	_, err := Security.CheckTokenPermissions([]rune{Security.SiteConfig}, c.Request)
+	_, err := security.CheckTokenPermissions([]rune{security.SiteConfig}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
-	Blog.SetTopFeed()
-	Blog.SetTopPost()
+	blog.SetTopFeed()
+	blog.SetTopPost()
 	c.AbortWithStatusJSON(http.StatusOK, gin.H{"Status": "Cache Updated"})
 }
 
 // ListUsers
 func ListofUsers(c *gin.Context) {
-	_, err := Security.CheckTokenPermissions([]rune{Security.UserManagement}, c.Request)
+	_, err := security.CheckTokenPermissions([]rune{security.UserManagement}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
@@ -216,7 +216,7 @@ func ListofUsers(c *gin.Context) {
 	}
 	listOfUsers, err := ListUsers(next, username)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, Logs.ErrorApi{Status: err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, logs.ErrorApi{Status: err.Error()})
 		return
 	}
 	c.AbortWithStatusJSON(200, gin.H{"Status": listOfUsers})

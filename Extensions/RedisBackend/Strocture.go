@@ -1,4 +1,4 @@
-package RedisBackend
+package redisbackend
 
 import (
 	"time"
