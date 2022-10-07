@@ -1,12 +1,12 @@
-package SMTPM
+package smtpm
 
 import (
 	"encoding/base64"
 	"net/smtp"
 	"os"
 
-	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
-	"github.com/PacodiazDG/Backend-blog/Modules/validation"
+	"github.com/PacodiazDG/Backend-blog/modules/logs"
+	"github.com/PacodiazDG/Backend-blog/modules/validation"
 )
 
 // ValidadteEmailArray verifica
@@ -48,7 +48,7 @@ func SendEmail(to []string, Subject, text string) {
 		"\n")
 	err := smtp.SendMail(SMTPHost+":"+SMTPport, auth, SMTPUsername, to, msgs)
 	if err != nil {
-		Logs.WriteLogs(err, Logs.MediumError)
+		logs.WriteLogs(err, logs.MediumError)
 		panic(err)
 	}
 }

@@ -1,4 +1,4 @@
-package ConfigInit
+package configinit
 
 import (
 	"bytes"
@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"text/template"
 
-	"github.com/PacodiazDG/Backend-blog/Api/v1/Blog"
-	database "github.com/PacodiazDG/Backend-blog/Database"
-	"github.com/PacodiazDG/Backend-blog/SMTPM"
-	services "github.com/PacodiazDG/Backend-blog/Services"
+	"github.com/PacodiazDG/Backend-blog/api/v1/blog"
+	database "github.com/PacodiazDG/Backend-blog/database"
+	services "github.com/PacodiazDG/Backend-blog/services"
+	SMTPM "github.com/PacodiazDG/Backend-blog/smtpm"
 	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -72,6 +72,6 @@ func Conf() {
 	}
 	database.Initdb()
 	database.InitRedis()
-	Blog.SetTopPost()
+	blog.SetTopPost()
 	services.AutoSetCacheTop()
 }

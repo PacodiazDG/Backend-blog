@@ -1,4 +1,4 @@
-package Blog
+package blog
 
 import (
 	"crypto/sha512"
@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
-	"github.com/PacodiazDG/Backend-blog/Modules/Security"
-	"github.com/PacodiazDG/Backend-blog/Modules/validation"
+	"github.com/PacodiazDG/Backend-blog/modules/logs"
+	"github.com/PacodiazDG/Backend-blog/modules/security"
+	"github.com/PacodiazDG/Backend-blog/modules/validation"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
@@ -19,7 +19,7 @@ import (
 
 // InsertPost
 func (v *PostController) InsertPost(c *gin.Context) {
-	jwtinfo, err := Security.CheckTokenPermissions([]rune{Security.PublishPost}, c.Request)
+	jwtinfo, err := security.CheckTokenPermissions([]rune{security.PublishPost}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
@@ -61,7 +61,7 @@ func (v *PostController) InsertPost(c *gin.Context) {
 
 // DelatePost
 func (v *PostController) DelatePost(c *gin.Context) {
-	_, err := Security.CheckTokenPermissions([]rune{Security.UploadFiles}, c.Request)
+	_, err := security.CheckTokenPermissions([]rune{security.UploadFiles}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
@@ -92,7 +92,7 @@ func (v *PostController) MyPosts(c *gin.Context) {
 			return
 		}
 	}
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
+	jwtinfo, err := security.GetinfoToken(security.ExtractToken(c.Request))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token Not valid"})
 		return
@@ -108,7 +108,7 @@ func (v *PostController) MyPosts(c *gin.Context) {
 
 // UpdatePost
 func (v *PostController) UpdatePost(c *gin.Context) {
-	jwtinfo, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
+	jwtinfo, err := security.GetinfoToken(security.ExtractToken(c.Request))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid."})
 		return
@@ -143,7 +143,7 @@ func (v *PostController) UpdatePost(c *gin.Context) {
 
 // Subir imagenes al servidor
 func (PostController) UploadImage(c *gin.Context) {
-	_, err := Security.CheckTokenPermissions([]rune{Security.UploadFiles}, c.Request)
+	_, err := security.CheckTokenPermissions([]rune{security.UploadFiles}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token Not valid"})
 		return
@@ -155,19 +155,19 @@ func (PostController) UploadImage(c *gin.Context) {
 	}
 	infofile, err := file.Open()
 	if err != nil {
-		Logs.WriteLogs(err, Logs.LowError)
+		logs.WriteLogs(err, logs.LowError)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "No file is received"})
 		return
 	}
 	byteContainer, err := io.ReadAll(infofile)
 	if err != nil {
-		Logs.WriteLogs(err, Logs.LowError)
+		logs.WriteLogs(err, logs.LowError)
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Error reading file"})
 		return
 	}
 	MIME := http.DetectContentType(byteContainer)
 
-	if !Security.IsImageMIME(MIME) {
+	if !security.IsImageMIME(MIME) {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "It is not image"})
 		return
 	}
@@ -183,7 +183,7 @@ func (PostController) UploadImage(c *gin.Context) {
 
 // Initialize Inizializa un post o un draft
 func (v *PostController) Initialize(c *gin.Context) {
-	jwtinfo, err := Security.CheckTokenPermissions([]rune{Security.PublishPost}, c.Request)
+	jwtinfo, err := security.CheckTokenPermissions([]rune{security.PublishPost}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return

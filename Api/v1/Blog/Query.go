@@ -1,11 +1,11 @@
-package Blog
+package blog
 
 import (
 	"context"
 	"errors"
 
-	database "github.com/PacodiazDG/Backend-blog/Database"
-	"github.com/PacodiazDG/Backend-blog/Modules/Logs"
+	"github.com/PacodiazDG/Backend-blog/database"
+	"github.com/PacodiazDG/Backend-blog/modules/logs"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -26,11 +26,11 @@ func (v *Queryconf) GetFeed(id int64, query bson.M) ([]FeedStrcture, error) {
 	var results []FeedStrcture
 	cursor, err := collection.Find(context.Background(), query, findOptions)
 	if err != nil {
-		Logs.WriteLogs(err, Logs.LowError)
+		logs.WriteLogs(err, logs.LowError)
 		return []FeedStrcture{}, errors.New("internal server error")
 	}
 	if err = cursor.All(context.Background(), &results); err != nil {
-		Logs.WriteLogs(err, Logs.MediumError)
+		logs.WriteLogs(err, logs.MediumError)
 		return []FeedStrcture{}, errors.New("internal server error")
 	}
 	return results, nil
@@ -41,7 +41,7 @@ func (v *Queryconf) ModelInsertPost(result *PostSimpleStruct) (*mongo.InsertOneR
 	collection := *database.Database.Collection(v.Collection)
 	info, err := collection.InsertOne(context.Background(), result)
 	if err != nil {
-		Logs.WriteLogs(err, Logs.LowError)
+		logs.WriteLogs(err, logs.LowError)
 		return nil, err
 	}
 	return info, nil

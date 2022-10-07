@@ -1,4 +1,4 @@
-package Security
+package security
 
 /// MIMEList
 const (

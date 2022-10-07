@@ -4,17 +4,17 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/PacodiazDG/Backend-blog/Api/router"
-	"github.com/PacodiazDG/Backend-blog/Middlewares"
-	"github.com/PacodiazDG/Backend-blog/Modules/ConfigInit"
-	"github.com/PacodiazDG/Backend-blog/Modules/validation"
+	"github.com/PacodiazDG/Backend-blog/api/router"
+	Middlewares "github.com/PacodiazDG/Backend-blog/middlewares"
+	"github.com/PacodiazDG/Backend-blog/modules/configinit"
+	"github.com/PacodiazDG/Backend-blog/modules/validation"
 	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	lisent := os.Getenv("PORT")
-	ConfigInit.Conf()
+	configinit.Conf()
 	if lisent == "" {
 		lisent = os.Getenv("Port")
 	}

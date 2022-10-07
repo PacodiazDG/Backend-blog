@@ -1,4 +1,4 @@
-package SMTPM
+package smtpm
 
 import "strings"
 

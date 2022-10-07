@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/PacodiazDG/Backend-blog/Api/v1/Blog"
-	"github.com/PacodiazDG/Backend-blog/Modules/Security"
+	"github.com/PacodiazDG/Backend-blog/api/v1/blog"
+	"github.com/PacodiazDG/Backend-blog/modules/security"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )
@@ -27,13 +27,13 @@ func GlobalHeader(c *gin.Context) {
 
 func NeedAuthentication(c *gin.Context) {
 	if c.GetHeader("Authorization") != "" {
-		token, err := Security.VerifyToken(c.Request)
+		token, err := security.VerifyToken(c.Request)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token Not valid"})
 			return
 		}
 		jwtinfo := token.Claims.(jwt.MapClaims)
-		if Blog.TokenBlackList(jwtinfo["Userid"].(string), jwtinfo["idtoken"].(string)) {
+		if blog.TokenBlackList(jwtinfo["Userid"].(string), jwtinfo["idtoken"].(string)) {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token Forbidden"})
 			return
 		}

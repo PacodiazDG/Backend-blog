@@ -1,11 +1,11 @@
-package Blog
+package blog
 
 import (
 	"net/http"
 	"regexp"
 	"strconv"
 
-	"github.com/PacodiazDG/Backend-blog/Modules/Security"
+	"github.com/PacodiazDG/Backend-blog/modules/security"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
@@ -50,7 +50,7 @@ func (v *PostController) FindPost(c *gin.Context) {
 			return
 		}
 	}
-	err = Security.TokenValid(c.Request)
+	err = security.TokenValid(c.Request)
 	var visibility = true
 	if err == nil {
 		visibility = false
@@ -100,7 +100,7 @@ func (v *PostController) Feed(c *gin.Context) {
 		return
 	}
 	query := bson.M{}
-	err = Security.TokenValid(c.Request)
+	err = security.TokenValid(c.Request)
 	if err != nil {
 		query = bson.M{"Visible": true, "Password": ""}
 	}
@@ -138,7 +138,7 @@ func (v *PostController) Post(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Stauts": err.Error()})
 		return
 	}
-	_, err = Security.VerifyToken((c.Request))
+	_, err = security.VerifyToken((c.Request))
 	if result.Password != "" && result.Password != c.Query("Hash") && err != nil {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
@@ -152,7 +152,7 @@ func (v *PostController) Post(c *gin.Context) {
 
 // Visibility Cambia la visiblidad de un  post
 func (v *PostController) Visibility(c *gin.Context) {
-	_, err := Security.GetinfoToken(Security.ExtractToken(c.Request))
+	_, err := security.GetinfoToken(security.ExtractToken(c.Request))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid."})
 		return

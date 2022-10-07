@@ -1,4 +1,4 @@
-package Security
+package security
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/PacodiazDG/Backend-blog/Extensions/RedisBackend"
+	"github.com/PacodiazDG/Backend-blog/extensions/redisbackend"
 	"github.com/golang-jwt/jwt"
 )
 
@@ -43,7 +43,7 @@ func VerifyToken(r *http.Request) (*jwt.Token, error) {
 		return nil, err
 	}
 	TokenInfo := token.Claims.(jwt.MapClaims)
-	if RedisBackend.CheckBan(TokenInfo["Userid"].(string), TokenInfo["idtoken"].(string)) {
+	if redisbackend.CheckBan(TokenInfo["Userid"].(string), TokenInfo["idtoken"].(string)) {
 		return nil, errors.New("token banned")
 	}
 	return token, nil
