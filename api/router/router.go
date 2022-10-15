@@ -46,6 +46,7 @@ func BackendRouter(router *gin.Engine) {
 			BlogRouter.GET("/feed", Blogs.Feed)
 			BlogRouter.GET("/find", Blogs.FindPost)
 			BlogRouter.GET("/visibility/:ObjectId", Blogs.Visibility)
+			BlogRouter.GET("/RecommendedPost/:ObjectId", Blogs.RecommendedPost)
 		}
 
 		DraftsRouter := v1.Group("/drafts")
