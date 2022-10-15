@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/PacodiazDG/Backend-blog/modules/filter"
 	"github.com/PacodiazDG/Backend-blog/modules/security"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -29,7 +30,7 @@ func (v *PostController) SetCollection(Collection string) *PostController {
 
 // Obtine el feed de las ultimas publicaciones
 func (v *PostController) FeedFast() ([]FeedStrcture, error) {
-	return v.Conf.GetFeed(0, bson.M{"Visible": true, "Password": ""})
+	return v.Conf.GetFeed(0, bson.M{"Visible": true, "Password": ""}, DefaultLimit)
 }
 
 // FindPost Api
@@ -58,14 +59,14 @@ func (v *PostController) FindPost(c *gin.Context) {
 	query = bson.M{"Title": bson.M{"$regex": primitive.Regex{
 		Pattern: ".*" + search + ".*", Options: "gi"}},
 		"Visible": visibility, "Password": ""}
-	Feed1, err := v.Conf.GetFeed(next, query)
+	Feed1, err := v.Conf.GetFeed(next, query, DefaultLimit)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
 	}
 	query = bson.M{"Description": bson.M{"$regex": primitive.Regex{Pattern: ".*" + search + ".*", Options: "gi"}},
 		"Visible": visibility, "Password": ""}
-	Feed2, err := v.Conf.GetFeed(next, query)
+	Feed2, err := v.Conf.GetFeed(next, query, DefaultLimit)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
@@ -104,7 +105,7 @@ func (v *PostController) Feed(c *gin.Context) {
 	if err != nil {
 		query = bson.M{"Visible": true, "Password": ""}
 	}
-	Feed, err := v.Conf.GetFeed(next, query)
+	Feed, err := v.Conf.GetFeed(next, query, DefaultLimit)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
@@ -176,6 +177,42 @@ func (v *PostController) Visibility(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"Status": "Post Updated"})
+}
+
+func (v *PostController) RecommendedPost(c *gin.Context) {
+	PostID, err := primitive.ObjectIDFromHex(c.Param("ObjectId"))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": "ObjectID is not valid"})
+		return
+	}
+	result, err := (v.Conf).ModelGetArticle(PostID)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Stauts": err.Error()})
+		return
+	}
+	query := bson.M{"Tags": bson.M{"$in": result.Tags}, "Visible": true, "Password": ""}
+	Feed, err := v.Conf.GetFeed(0, query, 2)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
+		return
+	}
+	if len(Feed) <= 2 {
+		query = bson.M{"Visible": true, "Password": ""}
+		Feed, err = v.Conf.GetFeed(0, query, 3)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
+			return
+		}
+	}
+	err = filter.RemoveElementinInterface(&Feed, "ID", PostID.Hex())
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Post": Feed,
+	})
 }
 
 // Retorna los post mas vistos

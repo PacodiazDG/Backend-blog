@@ -58,3 +58,5 @@ func IsValidStruct(result *PostSimpleStruct) error {
 	}
 	return nil
 }
+
+const DefaultLimit int64 = 10
