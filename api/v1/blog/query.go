@@ -17,12 +17,12 @@ type Queryconf struct {
 }
 
 // Get the feed
-func (v *Queryconf) GetFeed(id int64, query bson.M) ([]FeedStrcture, error) {
+func (v *Queryconf) GetFeed(next int64, query bson.M, limit int64) ([]FeedStrcture, error) {
 	findOptions := options.Find()
 	collection := *database.Database.Collection(v.Collection)
 	findOptions.SetSort(bson.M{"_id": -1})
-	findOptions.SetLimit(10)
-	findOptions.SetSkip(id * 11)
+	findOptions.SetLimit(limit)
+	findOptions.SetSkip(next * 11)
 	var results []FeedStrcture
 	cursor, err := collection.Find(context.Background(), query, findOptions)
 	if err != nil {

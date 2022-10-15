@@ -98,7 +98,7 @@ func (v *PostController) MyPosts(c *gin.Context) {
 		return
 	}
 	query := bson.M{"Author": jwtinfo["Userid"].(string)}
-	Feed, err := v.Conf.GetFeed(next, query)
+	Feed, err := v.Conf.GetFeed(next, query, DefaultLimit)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return

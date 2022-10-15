@@ -13,19 +13,16 @@ import (
 )
 
 func main() {
-	lisent := os.Getenv("PORT")
 	configinit.Conf()
+	lisent := os.Getenv("PortAndHost")
 	if lisent == "" {
-		lisent = os.Getenv("Port")
+		lisent = ":8080"
 	}
 	PemFile := os.Getenv("PemFile")
 	KeyFile := os.Getenv("KeyFile")
 	Server := gin.Default()
 	Server.Use(Middlewares.GlobalHeader)
 	router.BackendRouter(Server)
-	if lisent == "" {
-		lisent = ":8080"
-	}
 	if validation.FileExists(PemFile) && validation.FileExists(KeyFile) {
 		Server.RunTLS(lisent, PemFile, KeyFile)
 	} else {
