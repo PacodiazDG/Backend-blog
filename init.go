@@ -20,7 +20,7 @@ func main() {
 	}
 	PemFile := os.Getenv("PemFile")
 	KeyFile := os.Getenv("KeyFile")
-	Server := gin.Default()
+	Server := gin.New()
 	Server.Use(Middlewares.GlobalHeader)
 	router.BackendRouter(Server)
 	if validation.FileExists(PemFile) && validation.FileExists(KeyFile) {
