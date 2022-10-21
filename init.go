@@ -14,13 +14,13 @@ import (
 
 func main() {
 	configinit.Conf()
-	lisent := os.Getenv("PortAndHost")
+	lisent := os.Getenv("HostandPort")
 	if lisent == "" {
 		lisent = ":8080"
 	}
 	PemFile := os.Getenv("PemFile")
 	KeyFile := os.Getenv("KeyFile")
-	Server := gin.Default()
+	Server := gin.New()
 	Server.Use(Middlewares.GlobalHeader)
 	router.BackendRouter(Server)
 	if validation.FileExists(PemFile) && validation.FileExists(KeyFile) {
