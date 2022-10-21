@@ -14,7 +14,7 @@ import (
 
 func main() {
 	configinit.Conf()
-	lisent := os.Getenv("PortAndHost")
+	lisent := os.Getenv("HostandPort")
 	if lisent == "" {
 		lisent = ":8080"
 	}
