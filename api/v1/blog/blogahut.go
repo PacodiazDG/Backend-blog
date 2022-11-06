@@ -103,7 +103,7 @@ func (v *PostController) MyPosts(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
 	}
-	c.JSON(http.StatusOK, Feed)
+	c.JSON(http.StatusOK, gin.H{"Post": Feed})
 }
 
 // UpdatePost

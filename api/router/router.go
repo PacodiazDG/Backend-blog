@@ -20,6 +20,8 @@ func index(c *gin.Context) {
 func BackendRouter(router *gin.Engine) {
 	router.GET("/sitemap.xml", sitemap.SiteMapxml)
 	router.GET("/", index)
+	router.GET("/pages", index)
+
 	// router.GET("/Image/blog/:ImageName", Fileupload.BlogImageUpload)
 	router.Static("/assets/", "./Serverfiles")
 	router.LoadHTMLGlob("Templates/www/*")
