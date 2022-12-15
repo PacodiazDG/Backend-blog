@@ -197,6 +197,10 @@ func Updateinfo(c *gin.Context) {
 }
 
 func DelateaAccount(c *gin.Context) {
+	if c.Query("lastname") != "yes" {
+		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Status": "it is necessary to confirm the elimination"})
+		return
+	}
 	token, err := security.VerifyToken(c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid"})
@@ -264,9 +268,9 @@ func CheckToken(c *gin.Context) {
 }
 
 func DelateSession(c *gin.Context) {
-	jwtinfo, err := security.CheckTokenPermissions([]rune{security.PublishPost}, c.Request)
+	jwtinfo, err := security.GetinfoToken(security.ExtractToken(c.Request))
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Status": "Token not valid"})
 		return
 	}
 	uuID := jwtinfo["idtoken"].(string)
@@ -279,4 +283,30 @@ func DelateSession(c *gin.Context) {
 		return
 	}
 	c.AbortWithStatusJSON(http.StatusOK, gin.H{"Status": "uuid removed"})
+}
+
+// Renew the token that is about to expire and delete the token that is about to expire.
+func TokenRenewal(c *gin.Context) {
+	jwtinfo, err := security.GetinfoToken(security.ExtractToken(c.Request))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Status": "Token not valid"})
+		return
+	}
+	Uuid, err := uuid.Parse(jwtinfo["idtoken"].(string))
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	TokenInfo := security.TokenStrocture{
+		Email:       jwtinfo["Email"].(string),
+		ID:          jwtinfo["Userid"].(string),
+		Permissions: jwtinfo["authority"].(string),
+		Uuid:        Uuid,
+	}
+	token, err := security.CreateToken(TokenInfo)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Status": "token creation failed"})
+		return
+	}
+	c.AbortWithStatusJSON(http.StatusOK, gin.H{"Token": "Bearer " + token})
 }
