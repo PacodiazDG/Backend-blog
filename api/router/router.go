@@ -74,7 +74,7 @@ func BackendRouter(router *gin.Engine) {
 				MyUserAhut.GET("/Iploggeduser", user.Iploggeduser)
 				MyUserAhut.GET("/DelateAccount", user.DelateaAccount)
 				MyUserAhut.PUT("/My", user.Updateinfo)
-				MyUserAhut.GET("/removeToken/:uudi", user.DelateSession)
+				MyUserAhut.GET("/removeToken", user.DelateSession)
 				MyUserAhut.GET("/CheckToken", func(c *gin.Context) {
 					c.AbortWithStatus(http.StatusOK)
 				})

@@ -74,7 +74,7 @@ func VerifyAuthority(Authoritytoken string, AuthoritySys ...rune) bool {
 	return finded == len(AuthoritySys)
 }
 
-// CheckTokenPermissions a partir de un  Request valida el token y los permisos solicitados
+// From a Request it validates the token and the requested permissions and returns a jwt.MapClaims with the token data.
 func CheckTokenPermissions(Need []rune, r *http.Request) (jwt.MapClaims, error) {
 	jwtinfo, err := GetinfoToken(ExtractToken(r))
 	if err != nil {

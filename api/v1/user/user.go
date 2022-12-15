@@ -264,17 +264,17 @@ func CheckToken(c *gin.Context) {
 }
 
 func DelateSession(c *gin.Context) {
-	uudi := c.Param("uudi")
-	_, err := uuid.Parse(uudi)
+	jwtinfo, err := security.CheckTokenPermissions([]rune{security.PublishPost}, c.Request)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{"Status": "uuid is not valid"})
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
-	if redisbackend.InsertBanidtoken(uudi) != nil {
+	uuID := jwtinfo["idtoken"].(string)
+	if redisbackend.InsertBanidtoken(uuID) != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "an error occurred trying to ban the token"})
 		return
 	}
-	if RemoveIPAddrUser(uudi) != nil {
+	if RemoveIPAddrUser(uuID) != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "an error occurred trying to ban the token"})
 		return
 	}
