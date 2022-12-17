@@ -28,6 +28,7 @@ func Send(to []string, Subject, text string) {
 	}
 }
 
+//
 func SendEmail(to []string, Subject, text string) {
 	if os.Getenv("UseSMTP") == "false" {
 		return

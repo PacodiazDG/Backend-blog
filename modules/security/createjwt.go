@@ -21,7 +21,7 @@ func CreateToken(TokenInfo TokenStrocture) (string, error) {
 	jwtCreate["Userid"] = TokenInfo.ID
 	jwtCreate["idtoken"] = TokenInfo.Uuid.String()
 	jwtCreate["authority"] = TokenInfo.Permissions
-	jwtCreate["exp"] = time.Now().Add(time.Minute * 48).Unix()
+	jwtCreate["exp"] = time.Now().Add(time.Hour * 168).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS512, jwtCreate)
 	token, err := at.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
