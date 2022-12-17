@@ -14,7 +14,6 @@ func CheckRecaptcha(ip, response string) (bool, error) {
 		return false, errors.New("not configured recaptcha")
 	}
 	payload := strings.NewReader("secret=" + os.Getenv("rSecret") + "&response=" + response + "&remoteip=" + ip + "")
-	cdscds, _ := http.NewRequest("POST", url, payload)
-	_ = cdscds
+	_, _ := http.NewRequest("POST", url, payload)
 	return false, nil
 }

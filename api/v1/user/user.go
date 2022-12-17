@@ -197,7 +197,7 @@ func Updateinfo(c *gin.Context) {
 }
 
 func DelateaAccount(c *gin.Context) {
-	if c.Query("lastname") != "yes" {
+	if c.Query("Confirm") != "yes" {
 		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Status": "it is necessary to confirm the elimination"})
 		return
 	}
