@@ -37,7 +37,7 @@ func BanUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Status": "User Not found"})
 		return
 	}
-	err = redisbackend.SetBan(redisbackend.User{
+	err = redisbackend.SetBan(redisbackend.UserRedisJson{
 		ID:           IDuser,
 		Blocked:      true,
 		Reason:       "Banned",

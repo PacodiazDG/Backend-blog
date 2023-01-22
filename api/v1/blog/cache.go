@@ -6,7 +6,7 @@ import (
 )
 
 type Top50 struct {
-	Top []PostStruct
+	Top []StoryStruct
 }
 
 var Blogs = InitControllerPost()
@@ -15,7 +15,7 @@ var Blogs = InitControllerPost()
 var FastFeed []FeedStrcture
 
 // Variable global para cacheRam
-var CacheRamPost *[]PostStruct
+var CacheRamPost *[]StoryStruct
 
 // TokenBlackList gets if the token is blacklisted from some database
 func TokenBlackList(token, idtoken string) bool {

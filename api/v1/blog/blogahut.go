@@ -24,7 +24,7 @@ func (v *PostController) InsertPost(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
-	var result PostStruct
+	var result StoryStruct
 	if err := c.ShouldBindJSON(&result); err != nil {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid json provided")
 		return
@@ -40,7 +40,7 @@ func (v *PostController) InsertPost(c *gin.Context) {
 		result.Folder = "unknown"
 	}
 	re := regexp.MustCompile(`([A-Fa-f0-9]{128}(.jpg|.jpeg|.png|.gif))`)
-	result = PostStruct{
+	result = StoryStruct{
 		Title:         result.Title,
 		Content:       result.Content,
 		Tags:          result.Tags,
@@ -117,7 +117,7 @@ func (v *PostController) UpdatePost(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid."})
 		return
 	}
-	var result PostStruct
+	var result StoryStruct
 	if err := c.ShouldBindJSON(&result); err != nil {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid json provided")
 		return
@@ -127,7 +127,7 @@ func (v *PostController) UpdatePost(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid ObjectId")
 		return
 	}
-	result = PostStruct{
+	result = StoryStruct{
 		Title:       result.Title,
 		Content:     result.Content,
 		Tags:        result.Tags,
@@ -192,7 +192,7 @@ func (v *PostController) Initialize(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
-	Initialize := PostStruct{
+	Initialize := StoryStruct{
 		Title:       "New post",
 		Content:     "write your content here",
 		Tags:        []string{"Example"},

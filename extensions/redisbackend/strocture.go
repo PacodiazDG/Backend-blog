@@ -6,7 +6,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type User struct {
+// User-specific structure used in redis
+type UserRedisJson struct {
 	ID           primitive.ObjectID `bson:"_id" `
 	Blocked      bool               `bson:"Blocked"`
 	Reason       string             `bson:"Reason"`

@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// dfvdfv
-type PostStruct struct {
+// Complete structure of the stories
+type StoryStruct struct {
 	Title         string    `bson:"Title,omitempty"`
 	Content       string    `bson:"Content,omitempty"`
 	Visible       bool      `bson:"Visible"`
@@ -24,22 +24,13 @@ type PostStruct struct {
 	Folder        string    `bson:"Folder,omitempty"`
 }
 
-type SimpleDraftStructure struct {
-	Title       string   `bson:"Title,omitempty"`
-	Content     string   `bson:"Content,omitempty"`
-	Tags        []string `bson:"Tags,omitempty"`
-	Imagen      string   `bson:"Imagen,omitempty"`
-	Status      string   `bson:"Status,omitempty"`
-	Author      string   `bson:"Author,omitempty"`
-	Description string   `bson:"Description,omitempty"`
-}
-
 type ImageControl struct {
 	ImageHash string   `bson:"Title"`
 	Active    bool     `bson:"Active"`
 	Referal   []string `bson:"Title"`
 }
 
+// Feed structure
 type FeedStrcture struct {
 	Title       string    `bson:"Title,omitempty" `
 	Author      string    `bson:"Author,omitempty"  `
@@ -50,7 +41,8 @@ type FeedStrcture struct {
 	Visible     bool      `bson:"Visible,omitempty"`
 }
 
-func IsValidStruct(result *PostStruct) error {
+// valid if the stories' structure is valid
+func IsValidStruct(result *StoryStruct) error {
 	if len(result.Title) <= 5 {
 		return errors.New("the title of content is very short ")
 	} else if len(result.Content) <= 20 {
