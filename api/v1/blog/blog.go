@@ -119,9 +119,9 @@ func (v *PostController) Post(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Stauts": "Id not valid"})
 		return
 	}
-	for i := range *CacheRamPost {
-		if (*CacheRamPost)[i].ID == c.Param("ObjectId") {
-			Cache = (*CacheRamPost)[i]
+	for i := range *StoryCacheVar {
+		if (*StoryCacheVar)[i].ID == c.Param("ObjectId") {
+			Cache = (*StoryCacheVar)[i]
 			c.AbortWithStatusJSON(http.StatusOK, gin.H{
 				"Post":        Cache,
 				"Performance": true,

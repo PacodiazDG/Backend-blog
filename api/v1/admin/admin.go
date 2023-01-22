@@ -177,7 +177,7 @@ func ManualUpdateFeed(c *gin.Context) {
 		return
 	}
 	blog.SetTopFeed()
-	blog.SetTopPost()
+	blog.SetLastStories()
 	c.AbortWithStatusJSON(http.StatusOK, gin.H{"Status": "Cache Updated"})
 }
 
