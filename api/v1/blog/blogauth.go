@@ -141,7 +141,7 @@ func (v *PostController) UpdatePost(c *gin.Context) {
 	ReflexCache()
 }
 
-func (_ *PostController) UploadImage(c *gin.Context) {
+func (*PostController) UploadImage(c *gin.Context) {
 	_, err := security.CheckTokenPermissions([]rune{security.UploadFiles}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token Not valid"})
