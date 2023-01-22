@@ -18,6 +18,7 @@ func GetIP(c *gin.Context) string {
 	return html.EscapeString(c.Request.Header.Get(os.Getenv("IpaddressByHeader")))
 }
 
+// Get the user-agent and return it in EscapeString
 func GetUserAgent(c *gin.Context) string {
 	return html.EscapeString(c.Request.Header.Get("user-agent"))
 }

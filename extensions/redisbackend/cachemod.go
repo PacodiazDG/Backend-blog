@@ -18,8 +18,8 @@ func CheckBan(id, idtoken string) bool {
 	return err != redis.Nil
 }
 
-// SetBan Inserta baneo a redis
-func SetBan(Info User) error {
+// Insert ban to user in redisdb
+func SetBan(Info UserRedisJson) error {
 	JsonUser, err := json.Marshal(Info)
 	if err != nil {
 		return err
@@ -31,7 +31,7 @@ func SetBan(Info User) error {
 	return nil
 }
 
-// SetBan Inserta baneo a redis
+// remove a user's ban on redis
 func RemoveBan(id primitive.ObjectID) error {
 	err := database.RedisCon.Del(id.Hex()).Err()
 	if err != nil {
@@ -40,7 +40,7 @@ func RemoveBan(id primitive.ObjectID) error {
 	return nil
 }
 
-// GetFeedCache Returns the feed cache values
+// Returns the feed cache values
 func GetFeedCache(IDfeed string) string {
 	val, err := database.RedisCon.Get("feed" + IDfeed).Result()
 	if err != nil {
@@ -57,7 +57,7 @@ func InsertFeedCache(data, value string) {
 	}
 }
 
-// InsertFeedCache Get if any token is banned
+// Get if any token is banned
 func InsertBanidtoken(idtoken string) error {
 	return database.RedisCon.Set("Tokenid"+idtoken, "Ban", 0).Err()
 }

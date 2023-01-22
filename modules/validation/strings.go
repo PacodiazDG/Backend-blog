@@ -1,5 +1,6 @@
 package validation
 
+// Limits the number of words to a given number of words
 func TruncateString(text string, lent int) string {
 	if len(text) <= lent {
 		return text

@@ -23,6 +23,7 @@ func main() {
 	Server := gin.New()
 	Server.Use(Middlewares.GlobalHeader)
 	router.BackendRouter(Server)
+	println("https://localhost" + lisent)
 	if validation.FileExists(PemFile) && validation.FileExists(KeyFile) {
 		Server.RunTLS(lisent, PemFile, KeyFile)
 	} else {

@@ -17,14 +17,13 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// InsertPost
 func (v *PostController) InsertPost(c *gin.Context) {
 	jwtinfo, err := security.CheckTokenPermissions([]rune{security.PublishPost}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
-	var result PostSimpleStruct
+	var result StoryStruct
 	if err := c.ShouldBindJSON(&result); err != nil {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid json provided")
 		return
@@ -36,8 +35,11 @@ func (v *PostController) InsertPost(c *gin.Context) {
 	if result.Imagen == "" {
 		result.Imagen = "https://cdn.pixabay.com/photo/2015/04/23/21/59/tree-736877_960_720.jpg"
 	}
+	if result.Folder == "" {
+		result.Folder = "unknown"
+	}
 	re := regexp.MustCompile(`([A-Fa-f0-9]{128}(.jpg|.jpeg|.png|.gif))`)
-	result = PostSimpleStruct{
+	result = StoryStruct{
 		Title:         result.Title,
 		Content:       result.Content,
 		Tags:          result.Tags,
@@ -49,6 +51,7 @@ func (v *PostController) InsertPost(c *gin.Context) {
 		Description:   validation.TruncateString((result.Description), 250),
 		Views:         0,
 		UrlImageFound: re.FindAllString(result.Content, -1),
+		Folder:        result.Folder,
 	}
 	Status, err := v.Conf.ModelInsertPost(&result)
 	if err != nil {
@@ -59,7 +62,6 @@ func (v *PostController) InsertPost(c *gin.Context) {
 	ReflexCache()
 }
 
-// DelatePost
 func (v *PostController) DelatePost(c *gin.Context) {
 	_, err := security.CheckTokenPermissions([]rune{security.UploadFiles}, c.Request)
 	if err != nil {
@@ -80,7 +82,6 @@ func (v *PostController) DelatePost(c *gin.Context) {
 	ReflexCache()
 }
 
-// MyPosts Retorna los post publicados por el usuario
 func (v *PostController) MyPosts(c *gin.Context) {
 	var next int64 = 0
 	var err error
@@ -106,14 +107,13 @@ func (v *PostController) MyPosts(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"Post": Feed})
 }
 
-// UpdatePost
 func (v *PostController) UpdatePost(c *gin.Context) {
 	jwtinfo, err := security.GetinfoToken(security.ExtractToken(c.Request))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid."})
 		return
 	}
-	var result PostSimpleStruct
+	var result StoryStruct
 	if err := c.ShouldBindJSON(&result); err != nil {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid json provided")
 		return
@@ -123,7 +123,7 @@ func (v *PostController) UpdatePost(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid ObjectId")
 		return
 	}
-	result = PostSimpleStruct{
+	result = StoryStruct{
 		Title:       result.Title,
 		Content:     result.Content,
 		Tags:        result.Tags,
@@ -141,8 +141,7 @@ func (v *PostController) UpdatePost(c *gin.Context) {
 	ReflexCache()
 }
 
-// Subir imagenes al servidor
-func (PostController) UploadImage(c *gin.Context) {
+func (_ *PostController) UploadImage(c *gin.Context) {
 	_, err := security.CheckTokenPermissions([]rune{security.UploadFiles}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token Not valid"})
@@ -181,14 +180,13 @@ func (PostController) UploadImage(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"Url": "/assets/blog/" + hash + ".png"})
 }
 
-// Initialize Inizializa un post o un draft
 func (v *PostController) Initialize(c *gin.Context) {
 	jwtinfo, err := security.CheckTokenPermissions([]rune{security.PublishPost}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
-	Initialize := PostSimpleStruct{
+	Initialize := StoryStruct{
 		Title:       "New post",
 		Content:     "write your content here",
 		Tags:        []string{"Example"},

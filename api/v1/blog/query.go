@@ -37,7 +37,7 @@ func (v *Queryconf) GetFeed(next int64, query bson.M, limit int64) ([]FeedStrctu
 }
 
 // Insert a post from a structure
-func (v *Queryconf) ModelInsertPost(result *PostSimpleStruct) (*mongo.InsertOneResult, error) {
+func (v *Queryconf) ModelInsertPost(result *StoryStruct) (*mongo.InsertOneResult, error) {
 	collection := *database.Database.Collection(v.Collection)
 	info, err := collection.InsertOne(context.Background(), result)
 	if err != nil {
@@ -48,21 +48,21 @@ func (v *Queryconf) ModelInsertPost(result *PostSimpleStruct) (*mongo.InsertOneR
 }
 
 // Gets a post from an id
-func (v *Queryconf) ModelGetArticle(objectId primitive.ObjectID) (PostSimpleStruct, error) {
+func (v *Queryconf) ModelGetArticle(objectId primitive.ObjectID) (StoryStruct, error) {
 	collection := *database.Database.Collection(v.Collection)
-	var result PostSimpleStruct
+	var result StoryStruct
 	err := collection.FindOne(context.Background(), bson.M{"_id": objectId}).Decode(&result)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return PostSimpleStruct{}, errors.New("post not found")
+			return StoryStruct{}, errors.New("post not found")
 		}
-		return PostSimpleStruct{}, errors.New("post not found")
+		return StoryStruct{}, errors.New("post not found")
 	}
 	return result, nil
 }
 
 // Update a post from a structure
-func (v *Queryconf) ModelUpdate(dataInsert *PostSimpleStruct, objectId primitive.ObjectID) (bool, error) {
+func (v *Queryconf) ModelUpdate(dataInsert *StoryStruct, objectId primitive.ObjectID) (bool, error) {
 	collection := *database.Database.Collection(v.Collection)
 	_, err := collection.UpdateOne(context.Background(), bson.M{"_id": objectId}, bson.M{"$set": dataInsert})
 	if err != nil {
@@ -95,18 +95,18 @@ func (v *Queryconf) Addviews(id primitive.ObjectID) error {
 }
 
 // Get the last ten posts most viewed
-func (v *Queryconf) GetTOP() ([]PostSimpleStruct, error) {
+func (v *Queryconf) GetTOP() ([]StoryStruct, error) {
 	collection := *database.Database.Collection(v.Collection)
 	findOptions := options.Find()
 	findOptions.SetSort(bson.M{"Views": -1})
 	findOptions.SetLimit(50)
-	var results []PostSimpleStruct
+	var results []StoryStruct
 	cursor, err := collection.Find(context.Background(), bson.M{"Password": "", "Visible": true}, findOptions)
 	if err != nil {
-		return []PostSimpleStruct{}, err
+		return []StoryStruct{}, err
 	}
 	if err = cursor.All(context.Background(), &results); err != nil {
-		return []PostSimpleStruct{}, err
+		return []StoryStruct{}, err
 	}
 	return results, nil
 }

@@ -25,13 +25,13 @@ func ExtractToken(r *http.Request) string {
 	return ""
 }
 
-// GetinfoToken Solo obtine la informacion del token
+// gets the token information and returns it in the form of jwt.MapClaims.
 func GetinfoToken(tokenStr string) (jwt.MapClaims, error) {
 	token, _ := jwt.Parse(tokenStr, nil)
 	return token.Claims.(jwt.MapClaims), nil
 }
 
-// VerifyToken Esto verifica que el token sea valido a partir Request
+// This verifies that the token is valid from an http.Request.
 func VerifyToken(r *http.Request) (*jwt.Token, error) {
 	token, err := jwt.Parse(ExtractToken(r), func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -49,7 +49,7 @@ func VerifyToken(r *http.Request) (*jwt.Token, error) {
 	return token, nil
 }
 
-// TokenValid Solo valida que el token sea válido y que este vijente
+// Only validate that the token is valid and has not expired.
 func TokenValid(r *http.Request) error {
 	token, err := VerifyToken(r)
 	if err != nil {
@@ -59,19 +59,6 @@ func TokenValid(r *http.Request) error {
 		return err
 	}
 	return nil
-}
-
-// VerifyAuthority verifica que la autoridad corresponda con el token
-func VerifyAuthority(Authoritytoken string, AuthoritySys ...rune) bool {
-	finded := 0
-	for _, v := range Authoritytoken {
-		for _, k := range AuthoritySys {
-			if v != k {
-				finded++
-			}
-		}
-	}
-	return finded == len(AuthoritySys)
 }
 
 // From a Request it validates the token and the requested permissions and returns a jwt.MapClaims with the token data.

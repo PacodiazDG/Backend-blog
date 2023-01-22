@@ -3,11 +3,10 @@ package user
 import (
 	"time"
 
-	"github.com/PacodiazDG/Backend-blog/modules/validation"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// UserStrcture
+// Complete user structure
 type UserStrcture struct {
 	Email       string    `bson:"Email,omitempty"`
 	Image       string    `bson:"Image,omitempty"`
@@ -21,7 +20,7 @@ type UserStrcture struct {
 	ID          string    `bson:"_id,omitempty"`
 }
 
-// BasicInfo
+// Basic user structure
 type BasicInfo struct {
 	Username    string `bson:"Username,omitempty"`
 	FirstName   string `bson:"FirstName,omitempty"`
@@ -33,7 +32,7 @@ type BasicInfo struct {
 	Banned      bool   `bson:"Banned,omitempty"`
 }
 
-// IpAddrUser
+// Structure used in the logon record
 type IpAddrUser struct {
 	IDuser    primitive.ObjectID `bson:"IDuser"`
 	Date      time.Time          `bson:"Date"`
@@ -43,7 +42,7 @@ type IpAddrUser struct {
 	Uuidtoken string             `bson:"Uuidtoken"`
 }
 
-// LoginRequestStruct
+// Structure of the login parameters
 type LoginRequestStruct struct {
 	ID       uint64 `json:"id"`
 	Email    string `json:"Email"`
@@ -53,18 +52,8 @@ type LoginRequestStruct struct {
 // Data
 type Data []UserStrcture
 
-// RecoveryAccountStrcture
-type RecoveryAccountStrcture struct {
+// Account recovery structure only basic parameters
+type RecoveryAccountStrctureTemplate struct {
 	Name     string
 	UrlToken string
-}
-
-// IsValidUserInfo
-func IsValidUserInfo(Info *UserStrcture) bool {
-	if !validation.IsValidEmail(Info.Email) {
-		return false
-	} else if len(Info.Password) > 10 {
-		return false
-	}
-	return true
 }

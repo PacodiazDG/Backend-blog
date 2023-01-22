@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-type PostSimpleStruct struct {
+// Complete structure of the stories
+type StoryStruct struct {
 	Title         string    `bson:"Title,omitempty"`
 	Content       string    `bson:"Content,omitempty"`
 	Visible       bool      `bson:"Visible"`
@@ -20,16 +21,7 @@ type PostSimpleStruct struct {
 	Views         int64     `bson:"Views"`
 	ID            string    `bson:"_id,omitempty" `
 	Referal       string    `bson:"Referal,omitempty"`
-}
-
-type SimpleDraftStructure struct {
-	Title       string   `bson:"Title,omitempty"`
-	Content     string   `bson:"Content,omitempty"`
-	Tags        []string `bson:"Tags,omitempty"`
-	Imagen      string   `bson:"Imagen,omitempty"`
-	Status      string   `bson:"Status,omitempty"`
-	Author      string   `bson:"Author,omitempty"`
-	Description string   `bson:"Description,omitempty"`
+	Folder        string    `bson:"Folder,omitempty"`
 }
 
 type ImageControl struct {
@@ -38,6 +30,7 @@ type ImageControl struct {
 	Referal   []string `bson:"Title"`
 }
 
+// Feed structure
 type FeedStrcture struct {
 	Title       string    `bson:"Title,omitempty" `
 	Author      string    `bson:"Author,omitempty"  `
@@ -48,7 +41,8 @@ type FeedStrcture struct {
 	Visible     bool      `bson:"Visible,omitempty"`
 }
 
-func IsValidStruct(result *PostSimpleStruct) error {
+// valid if the stories' structure is valid
+func IsValidStruct(result *StoryStruct) error {
 	if len(result.Title) <= 5 {
 		return errors.New("the title of content is very short ")
 	} else if len(result.Content) <= 20 {
