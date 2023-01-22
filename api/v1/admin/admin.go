@@ -15,7 +15,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// BanUser
 func BanUser(c *gin.Context) {
 	_, err := security.CheckTokenPermissions([]rune{security.BanUser}, c.Request)
 	if err != nil {
@@ -52,8 +51,6 @@ func BanUser(c *gin.Context) {
 	c.AbortWithStatusJSON(200, gin.H{"Status": "User Baned"})
 }
 
-// DelateUser
-
 func DelateUser(c *gin.Context) {
 	_, err := security.CheckTokenPermissions([]rune{security.UserManagement}, c.Request)
 	if err != nil {
@@ -73,7 +70,6 @@ func DelateUser(c *gin.Context) {
 	c.AbortWithStatusJSON(200, gin.H{"Status": "User Deleted"})
 }
 
-// UnbanUser
 func UnbanUser(c *gin.Context) {
 	_, err := security.CheckTokenPermissions([]rune{security.BanUser}, c.Request)
 	if err != nil {
@@ -105,12 +101,10 @@ func UnbanUser(c *gin.Context) {
 	c.AbortWithStatusJSON(200, gin.H{"Status": "User Baned"})
 }
 
-// ChangeAbout
 func ChangeAbout(c *gin.Context) {
 	c.AbortWithStatus(200)
 }
 
-// ChangeInfoForUser Cambia
 func ChangeInfoForUser(c *gin.Context) {
 	_, err := security.CheckTokenPermissions([]rune{security.UserManagement}, c.Request)
 	if err != nil {
@@ -135,7 +129,6 @@ func ChangeInfoForUser(c *gin.Context) {
 	}
 }
 
-// UserManagement
 func UserManagement(c *gin.Context) {
 	_, err := security.CheckTokenPermissions([]rune{security.UserManagement}, c.Request)
 	if err != nil {
@@ -177,7 +170,6 @@ func UserManagement(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"Status": "User Updated"})
 }
 
-// ManualUpdateFeed
 func ManualUpdateFeed(c *gin.Context) {
 	_, err := security.CheckTokenPermissions([]rune{security.SiteConfig}, c.Request)
 	if err != nil {
@@ -185,11 +177,10 @@ func ManualUpdateFeed(c *gin.Context) {
 		return
 	}
 	blog.SetTopFeed()
-	blog.SetTopPost()
+	blog.SetLastStories()
 	c.AbortWithStatusJSON(http.StatusOK, gin.H{"Status": "Cache Updated"})
 }
 
-// ListUsers
 func ListofUsers(c *gin.Context) {
 	_, err := security.CheckTokenPermissions([]rune{security.UserManagement}, c.Request)
 	if err != nil {

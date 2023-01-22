@@ -11,29 +11,29 @@ type Top50 struct {
 
 var Blogs = InitControllerPost()
 
-// Canche para el primer feed
+// Stores the feed in a variable allowing for faster access
 var FastFeed []FeedStrcture
 
-// Variable global para cacheRam
-var CacheRamPost *[]StoryStruct
+// Stores the last 50 most viewed stories allowing for quicker access
+var StoryCacheVar *[]StoryStruct
 
-// TokenBlackList gets if the token is blacklisted from some database
+// gets if the token is blacklisted from some database
 func TokenBlackList(token, idtoken string) bool {
 	return redisbackend.CheckBan(token, idtoken)
 }
 
-// Actualizar el top de los post mas vistos
-func SetTopPost() {
+// Update the top 50 most viewed stories
+func SetLastStories() {
 	Blogs.SetCollection("Post")
 	info, err := Blogs.SetTop()
 	if err != nil {
 		logs.WriteLogs(err, logs.HardError)
 		panic(err)
 	}
-	CacheRamPost = &info
+	StoryCacheVar = &info
 }
 
-// SetFastFeed
+// Update the fed
 func SetTopFeed() {
 	Blogs.SetCollection("Post")
 	info, err := Blogs.FeedFast()
@@ -44,7 +44,8 @@ func SetTopFeed() {
 	FastFeed = info
 }
 
+// Updates stories and fed
 func ReflexCache() {
 	SetTopFeed()
-	SetTopPost()
+	SetLastStories()
 }

@@ -22,18 +22,16 @@ func InitControllerPost() *PostController {
 	return &PostController{}
 }
 
-// SetCollection Este método cambia de coleccion en la base de datos
+// change collection in the database
 func (v *PostController) SetCollection(Collection string) *PostController {
 	v.Conf.Collection = Collection
 	return v
 }
 
-// Obtine el feed de las ultimas publicaciones
 func (v *PostController) FeedFast() ([]FeedStrcture, error) {
 	return v.Conf.GetFeed(0, bson.M{"Visible": true, "Password": ""}, DefaultLimit)
 }
 
-// FindPost Api
 func (v *PostController) FindPost(c *gin.Context) {
 	var next int64 = 0
 	var err error
@@ -85,7 +83,6 @@ func (v *PostController) FindPost(c *gin.Context) {
 	})
 }
 
-// Feed es el Feed principal
 func (v *PostController) Feed(c *gin.Context) {
 	var next int64 = 0
 	var err error
@@ -115,7 +112,6 @@ func (v *PostController) Feed(c *gin.Context) {
 	})
 }
 
-// Post retorna el post solicitado
 func (v *PostController) Post(c *gin.Context) {
 	var Cache StoryStruct
 	PostID, err := primitive.ObjectIDFromHex(c.Param("ObjectId"))
@@ -123,9 +119,9 @@ func (v *PostController) Post(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Stauts": "Id not valid"})
 		return
 	}
-	for i := range *CacheRamPost {
-		if (*CacheRamPost)[i].ID == c.Param("ObjectId") {
-			Cache = (*CacheRamPost)[i]
+	for i := range *StoryCacheVar {
+		if (*StoryCacheVar)[i].ID == c.Param("ObjectId") {
+			Cache = (*StoryCacheVar)[i]
 			c.AbortWithStatusJSON(http.StatusOK, gin.H{
 				"Post":        Cache,
 				"Performance": true,
@@ -151,7 +147,6 @@ func (v *PostController) Post(c *gin.Context) {
 	})
 }
 
-// Visibility Cambia la visiblidad de un  post
 func (v *PostController) Visibility(c *gin.Context) {
 	_, err := security.GetinfoToken(security.ExtractToken(c.Request))
 	if err != nil {
@@ -215,7 +210,6 @@ func (v *PostController) RecommendedPost(c *gin.Context) {
 	})
 }
 
-// Retorna los post mas vistos
 func (v *PostController) SetTop() ([]StoryStruct, error) {
 	return v.Conf.GetTOP()
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/PacodiazDG/Backend-blog/modules/validation"
 )
 
-// ValidadteEmailArray verifica
+// Verify that the mailing list is valid.
 func ValidadteEmailArray(email []string) bool {
 	for _, value := range email {
 		if !validation.IsValidEmail(value) {
@@ -19,7 +19,7 @@ func ValidadteEmailArray(email []string) bool {
 	return true
 }
 
-// Send envia el correo uno por uno a partir de un array
+// send mail one by one
 func Send(to []string, Subject, text string) {
 	for _, s := range to {
 		if validation.IsValidEmail(s) {
@@ -28,7 +28,6 @@ func Send(to []string, Subject, text string) {
 	}
 }
 
-//
 func SendEmail(to []string, Subject, text string) {
 	if os.Getenv("UseSMTP") == "false" {
 		return
