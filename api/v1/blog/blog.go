@@ -117,7 +117,7 @@ func (v *PostController) Feed(c *gin.Context) {
 
 // Post retorna el post solicitado
 func (v *PostController) Post(c *gin.Context) {
-	var Cache PostSimpleStruct
+	var Cache PostStruct
 	PostID, err := primitive.ObjectIDFromHex(c.Param("ObjectId"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Stauts": "Id not valid"})
@@ -168,7 +168,7 @@ func (v *PostController) Visibility(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": "ObjectID is not valid"})
 		return
 	}
-	ProcessData := PostSimpleStruct{
+	ProcessData := PostStruct{
 		Visible: VisibleStatus,
 	}
 	_, err = v.Conf.ModelUpdate(&ProcessData, PostID)
@@ -216,6 +216,6 @@ func (v *PostController) RecommendedPost(c *gin.Context) {
 }
 
 // Retorna los post mas vistos
-func (v *PostController) SetTop() ([]PostSimpleStruct, error) {
+func (v *PostController) SetTop() ([]PostStruct, error) {
 	return v.Conf.GetTOP()
 }

@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 )
 
+// Generates random String
+// Not secure for cryptographic and related implementations
 func generateRandomBytes(n int) ([]byte, error) {
 	b := make([]byte, n)
 	_, err := rand.Read(b)
@@ -15,6 +17,8 @@ func generateRandomBytes(n int) ([]byte, error) {
 	return b, nil
 }
 
+// Generates random String
+// Not secure for cryptographic and related implementations
 func GenerateRandomString(s int) (string, error) {
 	b, err := generateRandomBytes(s)
 	return base64.URLEncoding.EncodeToString(b), err

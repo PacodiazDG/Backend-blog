@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-type PostSimpleStruct struct {
+// dfvdfv
+type PostStruct struct {
 	Title         string    `bson:"Title,omitempty"`
 	Content       string    `bson:"Content,omitempty"`
 	Visible       bool      `bson:"Visible"`
@@ -20,6 +21,7 @@ type PostSimpleStruct struct {
 	Views         int64     `bson:"Views"`
 	ID            string    `bson:"_id,omitempty" `
 	Referal       string    `bson:"Referal,omitempty"`
+	Folder        string    `bson:"Folder,omitempty"`
 }
 
 type SimpleDraftStructure struct {
@@ -48,7 +50,7 @@ type FeedStrcture struct {
 	Visible     bool      `bson:"Visible,omitempty"`
 }
 
-func IsValidStruct(result *PostSimpleStruct) error {
+func IsValidStruct(result *PostStruct) error {
 	if len(result.Title) <= 5 {
 		return errors.New("the title of content is very short ")
 	} else if len(result.Content) <= 20 {

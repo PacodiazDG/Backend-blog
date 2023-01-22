@@ -10,6 +10,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+// Global headers
 func GlobalHeader(c *gin.Context) {
 	c.Writer.Header().Set("X-Frame-Options", "SAMEORIGIN")
 	c.Writer.Header().Set("Referrer-Policy", "same-origin")
@@ -25,6 +26,7 @@ func GlobalHeader(c *gin.Context) {
 	c.Next()
 }
 
+// Middleware checks that the token is valid and searches a blacklist if the token is valid
 func NeedAuthentication(c *gin.Context) {
 	if c.GetHeader("Authorization") != "" {
 		token, err := security.VerifyToken(c.Request)

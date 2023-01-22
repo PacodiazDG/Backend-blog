@@ -24,7 +24,7 @@ func (v *PostController) InsertPost(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
-	var result PostSimpleStruct
+	var result PostStruct
 	if err := c.ShouldBindJSON(&result); err != nil {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid json provided")
 		return
@@ -36,8 +36,11 @@ func (v *PostController) InsertPost(c *gin.Context) {
 	if result.Imagen == "" {
 		result.Imagen = "https://cdn.pixabay.com/photo/2015/04/23/21/59/tree-736877_960_720.jpg"
 	}
+	if result.Folder == "" {
+		result.Folder = "unknown"
+	}
 	re := regexp.MustCompile(`([A-Fa-f0-9]{128}(.jpg|.jpeg|.png|.gif))`)
-	result = PostSimpleStruct{
+	result = PostStruct{
 		Title:         result.Title,
 		Content:       result.Content,
 		Tags:          result.Tags,
@@ -49,6 +52,7 @@ func (v *PostController) InsertPost(c *gin.Context) {
 		Description:   validation.TruncateString((result.Description), 250),
 		Views:         0,
 		UrlImageFound: re.FindAllString(result.Content, -1),
+		Folder:        result.Folder,
 	}
 	Status, err := v.Conf.ModelInsertPost(&result)
 	if err != nil {
@@ -113,7 +117,7 @@ func (v *PostController) UpdatePost(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Token not valid."})
 		return
 	}
-	var result PostSimpleStruct
+	var result PostStruct
 	if err := c.ShouldBindJSON(&result); err != nil {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid json provided")
 		return
@@ -123,7 +127,7 @@ func (v *PostController) UpdatePost(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid ObjectId")
 		return
 	}
-	result = PostSimpleStruct{
+	result = PostStruct{
 		Title:       result.Title,
 		Content:     result.Content,
 		Tags:        result.Tags,
@@ -188,7 +192,7 @@ func (v *PostController) Initialize(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
 	}
-	Initialize := PostSimpleStruct{
+	Initialize := PostStruct{
 		Title:       "New post",
 		Content:     "write your content here",
 		Tags:        []string{"Example"},

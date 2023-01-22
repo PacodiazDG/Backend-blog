@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// structure of a user token
 type TokenStrocture struct {
 	Email       string
 	ID          string
@@ -15,6 +16,7 @@ type TokenStrocture struct {
 	Permissions string
 }
 
+// Create a token with a user's basic data
 func CreateToken(TokenInfo TokenStrocture) (string, error) {
 	jwtCreate := jwt.MapClaims{}
 	jwtCreate["Email"] = TokenInfo.Email

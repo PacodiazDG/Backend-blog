@@ -12,16 +12,16 @@ import (
 )
 
 func index(c *gin.Context) {
-	c.HTML(http.StatusOK, "Index.tmpl", gin.H{
-		"title": "Ok",
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+		"title": "test",
 	})
 }
 
 func BackendRouter(router *gin.Engine) {
+	router.LoadHTMLFiles("./templates/www/index.tmpl")
 	router.GET("/sitemap.xml", sitemap.SiteMapxml)
 	router.GET("/", index)
 	router.GET("/pages", index)
-
 	// router.GET("/Image/blog/:ImageName", Fileupload.BlogImageUpload)
 	router.Static("/assets/", "./Serverfiles")
 	router.LoadHTMLGlob("Templates/www/*")

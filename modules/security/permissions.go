@@ -15,8 +15,7 @@ const (
 	UploadFiles      = 'L' //
 )
 
-// XCheckpermissions  Verifica el de los permisos y lo compara con los necesarios para completar la tarea
-// Retorna true si esta se puede completar
+// Checks the permissions and compares them with those required to complete the task.
 func OnlyCheckpermissions(Permissions string, Need []rune) bool {
 	check := 0
 	for _, v := range Permissions {
