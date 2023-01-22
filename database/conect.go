@@ -15,6 +15,7 @@ var Database *mongo.Database
 var RedisCon *redis.Client
 var Ctx = context.Background()
 
+// Initializes the connection to MongoDB and transfers it to a global variable
 func Initdb() {
 	initvardb, err := newConnection()
 	if err != nil {
@@ -22,6 +23,8 @@ func Initdb() {
 	}
 	Database = initvardb.Database("Blog")
 }
+
+// Creates the connection to mongoDB and returns it in a pointer (*mongo.Client)
 func newConnection() (*mongo.Client, error) {
 	dbConfig := os.Getenv("DB_CONFIG")
 	client, err := mongo.NewClient(options.Client().ApplyURI(dbConfig))
@@ -43,6 +46,7 @@ func newConnection() (*mongo.Client, error) {
 	return client, nil
 }
 
+// Initializes the connection to redisDB and transfers it to a global variable
 func InitRedis() {
 	RedisCon = redis.NewClient(&redis.Options{
 		Addr:     os.Getenv("RedisAddr"),

@@ -17,12 +17,12 @@ var FastFeed []FeedStrcture
 // Variable global para cacheRam
 var CacheRamPost *[]StoryStruct
 
-// TokenBlackList gets if the token is blacklisted from some database
+// gets if the token is blacklisted from some database
 func TokenBlackList(token, idtoken string) bool {
 	return redisbackend.CheckBan(token, idtoken)
 }
 
-// Actualizar el top de los post mas vistos
+// Update the top of most viewed posts
 func SetTopPost() {
 	Blogs.SetCollection("Post")
 	info, err := Blogs.SetTop()
