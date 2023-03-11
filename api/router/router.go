@@ -11,20 +11,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func index(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{
-		"title": "test",
-	})
-}
+var blogs = blog.InitControllerPost()
 
 func BackendRouter(router *gin.Engine) {
-	router.LoadHTMLFiles("./templates/www/index.tmpl")
+	blogs.SetCollection("Post")
+	PageManagement(router)
 	router.GET("/sitemap.xml", sitemap.SiteMapxml)
-	router.GET("/", index)
 	router.GET("/pages", index)
 	// router.GET("/Image/blog/:ImageName", Fileupload.BlogImageUpload)
 	router.Static("/assets/", "./Serverfiles")
-	router.LoadHTMLGlob("Templates/www/*")
 	router.HEAD("/ping", func(c *gin.Context) {
 		c.Status(http.StatusOK)
 	})
@@ -33,22 +28,20 @@ func BackendRouter(router *gin.Engine) {
 	{
 		BlogRouter := v1.Group("/blog")
 		{
-			Blogs := blog.InitControllerPost()
-			Blogs.SetCollection("Post")
 			BlogAdminRouter := BlogRouter.Group("/auth")
 			BlogAdminRouter.Use(Middlewares.NeedAuthentication)
 			{
-				BlogAdminRouter.POST("/InsetPost", Blogs.InsertPost)
-				BlogAdminRouter.DELETE("/DelatePost/:ObjectId", Blogs.DelatePost)
-				BlogAdminRouter.PUT("/UpdatePost/:ObjectId", Blogs.UpdatePost)
-				BlogAdminRouter.POST("/UploadImage", Blogs.UploadImage)
-				BlogAdminRouter.GET("/GetMyPost", Blogs.MyPosts)
+				BlogAdminRouter.POST("/InsetPost", blogs.InsertPost)
+				BlogAdminRouter.DELETE("/DelatePost/:ObjectId", blogs.DelatePost)
+				BlogAdminRouter.PUT("/UpdatePost/:ObjectId", blogs.UpdatePost)
+				BlogAdminRouter.POST("/UploadImage", blogs.UploadImage)
+				BlogAdminRouter.GET("/GetMyPost", blogs.MyPosts)
 			}
-			BlogRouter.GET("/p/:ObjectId", Blogs.Post)
-			BlogRouter.GET("/feed", Blogs.Feed)
-			BlogRouter.GET("/find", Blogs.FindPost)
-			BlogRouter.GET("/visibility/:ObjectId", Blogs.Visibility)
-			BlogRouter.GET("/RecommendedPost/:ObjectId", Blogs.RecommendedPost)
+			BlogRouter.GET("/p/:ObjectId", blogs.Post)
+			BlogRouter.GET("/feed", blogs.Feed)
+			BlogRouter.GET("/find", blogs.FindPost)
+			BlogRouter.GET("/visibility/:ObjectId", blogs.Visibility)
+			BlogRouter.GET("/RecommendedPost/:ObjectId", blogs.RecommendedPost)
 		}
 
 		DraftsRouter := v1.Group("/drafts")
