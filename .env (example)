@@ -47,3 +47,9 @@ IpaddressByHeader=
 
 # recaptcha Secret
 Rsecret=
+
+# Enable the use of pages in the backend
+Pages=false
+
+# Content Security Policy (CSP)
+ContentSecurityPolicy=
