@@ -14,7 +14,7 @@ import (
 func GlobalHeader(c *gin.Context) {
 	c.Writer.Header().Set("X-Frame-Options", "SAMEORIGIN")
 	c.Writer.Header().Set("Referrer-Policy", "same-origin")
-	//c.Writer.Header().Set("Content-Security-Policy", "default-src 'self' 'unsafe-inline'")
+	c.Writer.Header().Set("Content-Security-Policy", os.Getenv("ContentSecurityPolicy"))
 	c.Writer.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	c.Writer.Header().Set("Access-Control-Allow-Origin", os.Getenv("Cross"))
 	if c.Request.Method == http.MethodOptions {
