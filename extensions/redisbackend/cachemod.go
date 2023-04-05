@@ -10,11 +10,11 @@ import (
 
 // InsertFeedCache Get if any token is banned
 func CheckBan(id, idtoken string) bool {
-	_, err := database.RedisCon.Get("IDBaned" + id).Result()
+	_, err := database.RedisCon.Get(id).Result()
 	if err != redis.Nil {
 		return true
 	}
-	_, err = database.RedisCon.Get("Tokenid" + idtoken).Result()
+	_, err = database.RedisCon.Get(idtoken).Result()
 	return err != redis.Nil
 }
 
@@ -26,6 +26,16 @@ func SetBan(Info UserRedisJson) error {
 	}
 	err = database.RedisCon.Set(Info.ID.Hex(), JsonUser, 0).Err()
 	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func SetBanToken(Token, details string) error {
+	println(Token)
+	err := database.RedisCon.Set(Token, details, 0).Err()
+	if err != nil {
+		panic(err)
 		return err
 	}
 	return nil
