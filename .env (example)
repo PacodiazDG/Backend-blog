@@ -53,3 +53,6 @@ Pages=false
 
 # Content Security Policy (CSP)
 ContentSecurityPolicy=
+
+SiteMetaTitle=Site Title
+SiteMetaDescription=Site Description
