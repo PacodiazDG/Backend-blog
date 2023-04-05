@@ -1,6 +1,7 @@
 package router
 
 import (
+	"html"
 	"net/http"
 	"os"
 
@@ -10,9 +11,9 @@ import (
 
 func index(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"title":       "test",
-		"description": "test",
-		"site_name":   "test",
+		"title":       html.EscapeString(os.Getenv("SiteMetaTitle")),
+		"description": html.EscapeString(os.Getenv("SiteMetaDescrition")),
+		"site_name":   html.EscapeString(os.Getenv("SiteMetaTitle")),
 	})
 }
 func page(c *gin.Context) {
@@ -28,16 +29,16 @@ func page(c *gin.Context) {
 		return
 	}
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"title":       result.Title,
-		"description": result.Description,
-		"site_name":   "Blog",
+		"title":       html.EscapeString(result.Title),
+		"description": html.EscapeString(result.Description),
+		"site_name":   html.EscapeString(os.Getenv("SiteMetaTitle")),
 	})
 }
 func P404(c *gin.Context) {
 	c.HTML(http.StatusNotFound, "index.html", gin.H{
 		"title":       "Page not found",
 		"description": "Page not found",
-		"site_name":   "Blog",
+		"site_name":   html.EscapeString(os.Getenv("SiteMetaTitle")),
 	})
 }
 func PageManagement(router *gin.Engine) {
@@ -49,7 +50,7 @@ func PageManagement(router *gin.Engine) {
 		return
 	}
 	router.LoadHTMLFiles("./www-data/index.html")
-	router.GET("/404", index)
+	router.GET("/404", P404)
 	router.GET("/Pages", page)
 	router.Static("/static/", "./www-data/static")
 	router.NoRoute(index)
