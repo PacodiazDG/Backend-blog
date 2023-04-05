@@ -61,6 +61,20 @@ func (v *Queryconf) ModelGetArticle(objectId primitive.ObjectID) (StoryStruct, e
 	return result, nil
 }
 
+// Returns the basic data of a post
+func (v *Queryconf) GetMetaPost(objectId primitive.ObjectID) (FeedStrcture, error) {
+	collection := *database.Database.Collection(v.Collection)
+	var result FeedStrcture
+	err := collection.FindOne(context.Background(), bson.M{"_id": objectId}).Decode(&result)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return FeedStrcture{}, errors.New("post not found")
+		}
+		return FeedStrcture{}, errors.New("post not found")
+	}
+	return result, nil
+}
+
 // Update a post from a structure
 func (v *Queryconf) ModelUpdate(dataInsert *StoryStruct, objectId primitive.ObjectID) (bool, error) {
 	collection := *database.Database.Collection(v.Collection)

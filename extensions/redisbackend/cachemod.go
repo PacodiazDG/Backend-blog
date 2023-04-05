@@ -8,13 +8,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// InsertFeedCache Get if any token is banned
+// Get if any token is banned
 func CheckBan(id, idtoken string) bool {
-	_, err := database.RedisCon.Get("IDBaned" + id).Result()
+	_, err := database.RedisCon.Get(id).Result()
 	if err != redis.Nil {
 		return true
 	}
-	_, err = database.RedisCon.Get("Tokenid" + idtoken).Result()
+	_, err = database.RedisCon.Get(idtoken).Result()
 	return err != redis.Nil
 }
 
@@ -25,6 +25,14 @@ func SetBan(Info UserRedisJson) error {
 		return err
 	}
 	err = database.RedisCon.Set(Info.ID.Hex(), JsonUser, 0).Err()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func SetBanToken(Token, details string) error {
+	err := database.RedisCon.Set(Token, details, 0).Err()
 	if err != nil {
 		return err
 	}

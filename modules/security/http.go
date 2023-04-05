@@ -11,7 +11,7 @@ import (
 // if the IpaddressByHeader configuration parameter has a value, it will be
 // used to obtain the ip of that header
 func GetIP(c *gin.Context) string {
-	if os.Getenv("IpaddressByHeader") == "" {
+	if os.Getenv("UseProxy") == "false" {
 		IpAddrs := c.ClientIP()
 		return IpAddrs
 	}

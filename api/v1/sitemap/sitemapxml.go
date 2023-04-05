@@ -14,13 +14,11 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-var siteURL string = os.Getenv("Siteurl")
-
 // Generates a map (sitemapindex) with "sitemap" directions
 func siteMapLoc(CountDoc int64) string {
 	Meta := "<sitemapindex xmlns=\"http://www.google.com/schemas/sitemap/0.84\">\n"
 	for i := int64(0); i < CountDoc/10+1; i++ {
-		Meta += "<sitemap><loc>" + siteURL + "sitemap.xml?next=" + strconv.FormatInt(i*10, 10) + "</loc></sitemap>"
+		Meta += "<sitemap><loc>" + os.Getenv("Siteurl") + "sitemap.xml?next=" + strconv.FormatInt(i*10, 10) + "</loc></sitemap>"
 	}
 	Meta += "</sitemapindex>"
 	return Meta
@@ -63,7 +61,7 @@ func SiteMapxml(c *gin.Context) {
 	}
 	Meta := "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\">"
 	for _, value := range results {
-		Meta += "<url><loc>" + siteURL + url.QueryEscape(value["Title"].(string)) + "/" + value["_id"].(primitive.ObjectID).Hex() + "</loc></url>"
+		Meta += "<url><loc>" + os.Getenv("Siteurl") + url.QueryEscape(value["Title"].(string)) + "/" + value["_id"].(primitive.ObjectID).Hex() + "</loc></url>"
 	}
 	Meta += "</urlset>"
 	c.String(http.StatusOK, Meta)

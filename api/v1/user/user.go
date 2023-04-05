@@ -268,13 +268,30 @@ func CheckToken(c *gin.Context) {
 }
 
 func DelateSession(c *gin.Context) {
+	uuID := c.Param("token")
+	if primitive.IsValidObjectID(uuID) {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "ObjectID not valid"})
+		return
+	}
+	if redisbackend.SetBanToken(uuID, "session deleted by user") != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "an error occurred trying to ban the token"})
+		return
+	}
+	if RemoveIPAddrUser(uuID) != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "an error occurred trying to ban the token"})
+		return
+	}
+	c.AbortWithStatusJSON(http.StatusOK, gin.H{"Status": "uuid removed"})
+}
+
+func Signout(c *gin.Context) {
 	jwtinfo, err := security.GetinfoToken(security.ExtractToken(c.Request))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Status": "Token not valid"})
 		return
 	}
 	uuID := jwtinfo["idtoken"].(string)
-	if redisbackend.InsertBanidtoken(uuID) != nil {
+	if redisbackend.SetBanToken(uuID, "session deleted by user") != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "an error occurred trying to ban the token"})
 		return
 	}

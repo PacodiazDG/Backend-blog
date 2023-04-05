@@ -43,7 +43,17 @@ KeyFile=selfsigned.key
 ginReleaseMode=false
 
 # Name of the header that will be used to obtain the IP, if you are not going to use any, leave it empty 
+UseProxy=false
 IpaddressByHeader=
 
 # recaptcha Secret
 Rsecret=
+
+# Enable the use of pages in the backend
+Pages=false
+
+# Content Security Policy (CSP)
+ContentSecurityPolicy=
+
+SiteMetaTitle=Site Title
+SiteMetaDescription=Site Description

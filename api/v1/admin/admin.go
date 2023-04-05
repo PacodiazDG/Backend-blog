@@ -3,7 +3,6 @@ package admin
 import (
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/PacodiazDG/Backend-blog/api/v1/blog"
 	"github.com/PacodiazDG/Backend-blog/api/v1/user"
@@ -16,7 +15,7 @@ import (
 )
 
 func BanUser(c *gin.Context) {
-	_, err := security.CheckTokenPermissions([]rune{security.BanUser}, c.Request)
+	jwtinfo, err := security.CheckTokenPermissions([]rune{security.BanUser}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
@@ -24,6 +23,10 @@ func BanUser(c *gin.Context) {
 	IDuser, err := primitive.ObjectIDFromHex(c.Param("UserID"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": "ID type no valid."})
+		return
+	}
+	if jwtinfo["Userid"] == IDuser.Hex() {
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "You can't ban your own account"})
 		return
 	}
 	Reason := c.DefaultQuery("Reason", "Other")
@@ -37,12 +40,10 @@ func BanUser(c *gin.Context) {
 		return
 	}
 	err = redisbackend.SetBan(redisbackend.UserRedisJson{
-		ID:           IDuser,
-		Blocked:      true,
-		Reason:       "Banned",
-		Date:         time.Now(),
-		LoginAttempt: 0,
-		Details:      Reason,
+		ID:      IDuser,
+		Blocked: true,
+		Reason:  "Banned",
+		Details: Reason,
 	})
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, gin.H{"Status": "Banned from db"})
@@ -52,7 +53,7 @@ func BanUser(c *gin.Context) {
 }
 
 func DelateUser(c *gin.Context) {
-	_, err := security.CheckTokenPermissions([]rune{security.UserManagement}, c.Request)
+	jwtinfo, err := security.CheckTokenPermissions([]rune{security.UserManagement}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
@@ -60,6 +61,10 @@ func DelateUser(c *gin.Context) {
 	IDuser, err := primitive.ObjectIDFromHex(c.Param("UserID"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": "ID type no valid."})
+		return
+	}
+	if jwtinfo["Userid"] == IDuser.String() {
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": "Can't delete your own account"})
 		return
 	}
 	err = user.DelateAccount(IDuser)

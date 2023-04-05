@@ -24,12 +24,6 @@ type StoryStruct struct {
 	Folder        string    `bson:"Folder,omitempty"`
 }
 
-type ImageControl struct {
-	ImageHash string   `bson:"Title"`
-	Active    bool     `bson:"Active"`
-	Referal   []string `bson:"Title"`
-}
-
 // Feed structure
 type FeedStrcture struct {
 	Title       string    `bson:"Title,omitempty" `

@@ -66,7 +66,7 @@ func RemoveIPAddrUser(uudi string) error {
 		return errors.New("error apparently the uuid does not exist")
 	}
 	if err != nil {
-		return errors.New("error 0x74711545a1")
+		return errors.New("error")
 	}
 	return nil
 }
