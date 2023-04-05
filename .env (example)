@@ -43,6 +43,7 @@ KeyFile=selfsigned.key
 ginReleaseMode=false
 
 # Name of the header that will be used to obtain the IP, if you are not going to use any, leave it empty 
+UseProxy=false
 IpaddressByHeader=
 
 # recaptcha Secret
