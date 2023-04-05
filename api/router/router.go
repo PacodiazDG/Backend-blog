@@ -18,7 +18,6 @@ func BackendRouter(router *gin.Engine) {
 	PageManagement(router)
 	router.GET("/sitemap.xml", sitemap.SiteMapxml)
 	router.GET("/pages", index)
-	// router.GET("/Image/blog/:ImageName", Fileupload.BlogImageUpload)
 	router.Static("/assets/", "./Serverfiles")
 	router.HEAD("/ping", func(c *gin.Context) {
 		c.Status(http.StatusOK)
