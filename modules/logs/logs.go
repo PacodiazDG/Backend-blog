@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// WriteLogs maneja los errores
+// writes errors to a file depending on their severity
 func WriteLogs(errors error, severity int) {
 	s := errors.Error()
 	f, err := os.OpenFile("./error.log",

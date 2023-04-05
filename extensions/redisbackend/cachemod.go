@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// InsertFeedCache Get if any token is banned
+// Get if any token is banned
 func CheckBan(id, idtoken string) bool {
 	_, err := database.RedisCon.Get(id).Result()
 	if err != redis.Nil {
