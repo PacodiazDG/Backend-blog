@@ -291,7 +291,6 @@ func Signout(c *gin.Context) {
 		return
 	}
 	uuID := jwtinfo["idtoken"].(string)
-	println(uuID)
 	if redisbackend.SetBanToken(uuID, "session deleted by user") != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "an error occurred trying to ban the token"})
 		return

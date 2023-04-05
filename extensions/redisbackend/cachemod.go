@@ -32,7 +32,6 @@ func SetBan(Info UserRedisJson) error {
 }
 
 func SetBanToken(Token, details string) error {
-	println(Token)
 	err := database.RedisCon.Set(Token, details, 0).Err()
 	if err != nil {
 		return err
