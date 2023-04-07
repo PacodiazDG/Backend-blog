@@ -63,7 +63,7 @@ func (v *PostController) InsertPost(c *gin.Context) {
 }
 
 func (v *PostController) DelatePost(c *gin.Context) {
-	_, err := security.CheckTokenPermissions([]rune{security.UploadFiles}, c.Request)
+	_, err := security.CheckTokenPermissions([]rune{security.DelatePost}, c.Request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"Status": err.Error()})
 		return
