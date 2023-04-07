@@ -2,6 +2,7 @@ package router
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/PacodiazDG/Backend-blog/api/v1/admin"
 	"github.com/PacodiazDG/Backend-blog/api/v1/blog"
@@ -15,10 +16,12 @@ var blogs = blog.InitControllerPost()
 
 func BackendRouter(router *gin.Engine) {
 	blogs.SetCollection("Post")
+	if os.Getenv("Storage") == "true" {
+		router.Static("/assets/", "./Serverfiles")
+	}
 	PageManagement(router)
 	router.GET("/sitemap.xml", sitemap.SiteMapxml)
 	router.GET("/pages", index)
-	router.Static("/assets/", "./Serverfiles")
 	router.HEAD("/ping", func(c *gin.Context) {
 		c.Status(http.StatusOK)
 	})
