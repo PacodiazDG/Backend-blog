@@ -59,9 +59,20 @@ func SiteMapxml(c *gin.Context) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		panic(err)
 	}
+	siteUrl := os.Getenv("Siteurl")
+	if os.Getenv("ExternSiteMap") == "true" {
+		siteUrl = os.Getenv("SecondSite")
+	}
+
 	Meta := "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\">"
 	for _, value := range results {
-		Meta += "<url><loc>" + os.Getenv("Siteurl") + url.QueryEscape(value["Title"].(string)) + "/" + value["_id"].(primitive.ObjectID).Hex() + "</loc></url>"
+
+		u, err := url.Parse(siteUrl + "/Pages?id=" + value["_id"].(primitive.ObjectID).Hex())
+		if err != nil {
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+		Meta += "<url><loc>" + u.String() + "</loc></url>"
 	}
 	Meta += "</urlset>"
 	c.String(http.StatusOK, Meta)
