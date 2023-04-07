@@ -171,7 +171,6 @@ func Updateinfo(c *gin.Context) {
 		}
 		result.Password = string(hashedPassword)
 	}
-	//
 	result = UserStrcture{
 		Username:  result.Username,
 		Password:  result.Password,
