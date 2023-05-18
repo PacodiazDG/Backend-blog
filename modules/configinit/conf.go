@@ -23,12 +23,6 @@ const banner string = `
 ================================================================================
 `
 
-type test struct {
-	Name  string
-	Marks int
-	Id    string
-}
-
 func Conf() {
 	println(banner)
 	if _, err := os.Stat("./Serverfiles/"); os.IsNotExist(err) {
@@ -56,10 +50,9 @@ func Conf() {
 	if os.Getenv("ginReleaseMode") == "true" {
 		gin.SetMode(gin.ReleaseMode)
 	}
-	// Load template and
 	if os.Getenv("TestSMTP") == "true" {
 		var tpl bytes.Buffer
-		std1 := test{"test", 94, "test"}
+		std1 := SMTPM.TestSmtpm{Name: "Test", Message: "Test"}
 		t, err := template.ParseFiles("./Templates/Mail/Test SMTP confg.tmpl")
 		if err != nil {
 			panic(err)
@@ -68,7 +61,7 @@ func Conf() {
 			panic(err)
 		}
 		result := tpl.String()
-		SMTPM.Send([]string{"example@example.com", "example@example.com"}, "Test", result)
+		SMTPM.Send([]string{os.Getenv("TestEmailSMTP")}, "Test", result)
 	}
 	database.Initdb()
 	database.InitRedis()
