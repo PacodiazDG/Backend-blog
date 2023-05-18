@@ -29,6 +29,7 @@ SMTPport=587
 SMTPUsername=example@example.com
 SMTPPassword=Passexample
 TestSMTP=false
+TestEmailSMTP=example@example.com
 UseSMTP=false
 
 # Redis credencials
