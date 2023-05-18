@@ -74,4 +74,5 @@ func Conf() {
 	database.InitRedis()
 	blog.SetLastStories()
 	services.AutoSetCacheTop()
+	services.ImagebackupService()
 }
