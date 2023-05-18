@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/PacodiazDG/Backend-blog/api/v1/blog"
+	"github.com/PacodiazDG/Backend-blog/modules/backup"
 	"github.com/PacodiazDG/Backend-blog/modules/logs"
 	"github.com/fatih/color"
 )
@@ -31,5 +32,22 @@ func AutoSetCacheTop() {
 			}
 		}
 
+	}()
+}
+
+func ImagebackupService() {
+	ticker := time.NewTicker(168 * time.Hour)
+	quit := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				backup.GenerateCompress()
+				color.Green("backup has been successfully created :" + (time.Now()).String())
+			case <-quit:
+				ticker.Stop()
+				return
+			}
+		}
 	}()
 }
