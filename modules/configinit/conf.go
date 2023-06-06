@@ -25,6 +25,9 @@ const banner string = `
 
 func Conf() {
 	println(banner)
+	if err := validation(); err != nil {
+		panic(err)
+	}
 	if _, err := os.Stat("./Serverfiles/"); os.IsNotExist(err) {
 		FolderErr := os.MkdirAll("./Serverfiles/", os.ModePerm)
 		if FolderErr != nil {
