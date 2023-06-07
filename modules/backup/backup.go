@@ -10,12 +10,11 @@ import (
 	"github.com/PacodiazDG/Backend-blog/modules/logs"
 )
 
-func GenerateCompress() {
+func GenerateCompress() error {
 	t := time.Now()
 	fb, err := os.Create("Backup" + t.Format("20060102150405") + ".zip")
 	if err != nil {
 		logs.WriteLogs(err, logs.CriticalError)
-		return
 	}
 	defer fb.Close()
 	w := zip.NewWriter(fb)
@@ -40,11 +39,12 @@ func GenerateCompress() {
 		if err != nil {
 			return err
 		}
-		return nil
+		return file.Sync()
 	}
 	err = filepath.Walk("./Serverfiles", WalkFunc)
 	if err != nil {
 		logs.WriteLogs(err, logs.CriticalError)
-		return
+		return err
 	}
+	return fb.Close()
 }

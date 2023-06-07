@@ -16,7 +16,7 @@ func validation() error {
 		return errors.New("")
 	}
 	if os.Getenv("DefaultDatabase") == "" {
-		return errors.New("")
+		return errors.New("DefaultDatabase cannot be empty")
 	}
 	if os.Getenv("LogErr") == "" {
 		return errors.New("LogErr cannot be empty")
