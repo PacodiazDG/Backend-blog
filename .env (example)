@@ -29,6 +29,7 @@ SMTPport=587
 SMTPUsername=example@example.com
 SMTPPassword=Passexample
 TestSMTP=false
+TestEmailSMTP=example@example.com
 UseSMTP=false
 
 # Redis credencials
@@ -44,7 +45,7 @@ ginReleaseMode=false
 
 # Name of the header that will be used to obtain the IP, if you are not going to use any, leave it empty 
 UseProxy=false
-IpaddressByHeader=
+IpaddressByHeader=CF-Connecting-IP
 
 # recaptcha Secret
 Rsecret=
@@ -55,5 +56,9 @@ Pages=false
 # Content Security Policy (CSP)
 ContentSecurityPolicy=
 
+# Site Details
 SiteMetaTitle=Site Title
 SiteMetaDescription=Site Description
+
+# Enable storage path
+Storage=true

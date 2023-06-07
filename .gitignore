@@ -149,3 +149,4 @@ node_modules
 error.log
 serverfiles
 /www-data
+*.zip
