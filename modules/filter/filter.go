@@ -1,7 +1,7 @@
 package filter
 
 import (
-	"fmt"
+	"errors"
 	"reflect"
 )
 
@@ -10,7 +10,7 @@ func RemoveElementinInterface(t interface{}, keyname string, object string) erro
 	resultsVal := reflect.New(intType)
 	rv := (reflect.ValueOf(t))
 	if resultsVal.Kind() != reflect.Ptr || rv.Kind() != reflect.Ptr {
-		return fmt.Errorf("results argument must be a pointer to a slice, but was a %s", resultsVal.Kind())
+		return errors.New("results argument must be a pointer to a slice")
 	}
 	rvElem := rv.Elem()
 	interfaceVal := resultsVal.Elem()
