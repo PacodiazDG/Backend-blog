@@ -45,3 +45,8 @@ func NeedAuthentication(c *gin.Context) {
 	}
 	c.Next()
 }
+
+func ApiInfo(c *gin.Context) {
+	c.Writer.Header().Set("Via", "API")
+	c.Next()
+}
