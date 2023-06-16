@@ -28,6 +28,7 @@ func BackendRouter(router *gin.Engine) {
 
 	v1 := router.Group("/v1")
 	{
+		v1.Use(Middlewares.ApiInfo)
 		BlogRouter := v1.Group("/blog")
 		{
 			BlogAdminRouter := BlogRouter.Group("/auth")
