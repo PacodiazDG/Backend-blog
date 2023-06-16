@@ -25,9 +25,7 @@ const banner string = `
 
 func Conf() {
 	println(banner)
-	if err := validation(); err != nil {
-		panic(err)
-	}
+
 	if _, err := os.Stat("./Serverfiles/"); os.IsNotExist(err) {
 		FolderErr := os.MkdirAll("./Serverfiles/", os.ModePerm)
 		if FolderErr != nil {
@@ -40,6 +38,9 @@ func Conf() {
 	}
 	err := godotenv.Load()
 	if err != nil {
+		panic(err)
+	}
+	if err := validation(); err != nil {
 		panic(err)
 	}
 	i, err := strconv.Atoi(os.Getenv("TokenExpirationTimeInMinutes"))
