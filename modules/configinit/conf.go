@@ -57,7 +57,7 @@ func Conf() {
 	if os.Getenv("TestSMTP") == "true" {
 		var tpl bytes.Buffer
 		std1 := SMTPM.TestSmtpm{Name: "Test", Message: "Test"}
-		t, err := template.ParseFiles("./Templates/Mail/Test SMTP confg.tmpl")
+		t, err := template.ParseFiles("./templates/Mail/Test SMTP confg.tmpl")
 		if err != nil {
 			panic(err)
 		}
