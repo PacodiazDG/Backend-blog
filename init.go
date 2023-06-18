@@ -12,7 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Backend blog //
 func main() {
 	configinit.Conf()
 	lisent := os.Getenv("HostandPort")
