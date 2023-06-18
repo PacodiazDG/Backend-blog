@@ -29,9 +29,11 @@ func page(c *gin.Context) {
 		return
 	}
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"title":       html.EscapeString(result.Title),
-		"description": html.EscapeString(result.Description),
-		"site_name":   html.EscapeString(os.Getenv("SiteMetaTitle")),
+		"title":         html.EscapeString(result.Title),
+		"description":   html.EscapeString(result.Description),
+		"site_name":     html.EscapeString(os.Getenv("SiteMetaTitle")),
+		"ogimage":       html.EscapeString(result.Imagen),
+		"gverification": html.EscapeString(os.Getenv("GoogleSite_Verification")),
 	})
 }
 func P404(c *gin.Context) {

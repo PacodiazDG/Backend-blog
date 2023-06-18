@@ -62,3 +62,6 @@ SiteMetaDescription=Site Description
 
 # Enable storage path
 Storage=true
+
+# Google site verification key
+GoogleSite_Verification=
