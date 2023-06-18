@@ -52,7 +52,7 @@ func RecoveryAccount(c *gin.Context) {
 	URL := os.Getenv("Siteurl") + "/?token=" + token
 	var tpl bytes.Buffer
 	std1 := RecoveryAccountStrctureTemplate{"test", URL}
-	t, err := template.ParseFiles("./Templates/Mail/recoveryaccount.tmpl")
+	t, err := template.ParseFiles("./templates/Mail/recoveryaccount.tmpl")
 	if err != nil {
 		panic(err)
 	}

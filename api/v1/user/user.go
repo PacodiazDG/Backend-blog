@@ -80,7 +80,7 @@ func Login(c *gin.Context) {
 	}
 	var tpl bytes.Buffer
 	std1 := templateLoginAlert{security.GetIP(c), security.GetUserAgent(c), ""}
-	TemplateL, err := template.ParseFiles("./Templates/Mail/Login.tmpl")
+	TemplateL, err := template.ParseFiles("./templates/Mail/Login.tmpl")
 	if err != nil {
 		logs.WriteLogs(err, logs.MediumError)
 		c.JSON(http.StatusOK, gin.H{"Status": "Internal Server Error"})
