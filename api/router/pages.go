@@ -11,9 +11,10 @@ import (
 
 func index(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"title":       html.EscapeString(os.Getenv("SiteMetaTitle")),
-		"description": html.EscapeString(os.Getenv("SiteMetaDescription")),
-		"site_name":   html.EscapeString(os.Getenv("SiteMetaTitle")),
+		"title":         html.EscapeString(os.Getenv("SiteMetaTitle")),
+		"description":   html.EscapeString(os.Getenv("SiteMetaDescription")),
+		"site_name":     html.EscapeString(os.Getenv("SiteMetaTitle")),
+		"gverification": html.EscapeString(os.Getenv("GoogleSite_Verification")),
 	})
 }
 func page(c *gin.Context) {
