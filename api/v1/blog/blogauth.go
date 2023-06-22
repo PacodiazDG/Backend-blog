@@ -38,6 +38,9 @@ func (v *PostController) InsertPost(c *gin.Context) {
 	if result.Folder == "" {
 		result.Folder = "unknown"
 	}
+	if result.Password != "" {
+		result.Visible = false
+	}
 	re := regexp.MustCompile(`([A-Fa-f0-9]{128}(.jpg|.jpeg|.png|.gif))`)
 	result = StoryStruct{
 		Title:         result.Title,
@@ -122,6 +125,9 @@ func (v *PostController) UpdatePost(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, "Invalid ObjectId")
 		return
+	}
+	if result.Password != "" {
+		result.Visible = false
 	}
 	result = StoryStruct{
 		Title:       result.Title,

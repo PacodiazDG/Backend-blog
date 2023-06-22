@@ -23,10 +23,19 @@ func page(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Stauts": "Id not valid"})
 		return
 	}
-
 	result, err := blogs.Conf.GetMetaPost(PostID)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Stauts": err.Error()})
+		return
+	}
+	if !result.Visible {
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"title":         "",
+			"description":   "",
+			"site_name":     "",
+			"ogimage":       "",
+			"gverification": "",
+		})
 		return
 	}
 	c.HTML(http.StatusOK, "index.html", gin.H{
