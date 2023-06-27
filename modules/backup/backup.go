@@ -10,7 +10,8 @@ import (
 	"github.com/PacodiazDG/Backend-blog/modules/logs"
 )
 
-func GenerateCompress() error {
+// It takes care of making a backup to a folder recursively.
+func GenerateBackup(folder string) error {
 	t := time.Now()
 	fb, err := os.Create("Backup" + t.Format("20060102150405") + ".zip")
 	if err != nil {
@@ -41,7 +42,7 @@ func GenerateCompress() error {
 		}
 		return file.Sync()
 	}
-	err = filepath.Walk("./Serverfiles", WalkFunc)
+	err = filepath.Walk(folder, WalkFunc)
 	if err != nil {
 		logs.WriteLogs(err, logs.CriticalError)
 		return err

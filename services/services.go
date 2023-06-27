@@ -16,7 +16,7 @@ func AutoSetCacheTop() {
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				color.Red("Critical Error:")
+				color.Red("[Svc] Critical error:  please check the error logs")
 				logs.WriteLogs(r.(error), logs.CriticalError)
 				AutoSetCacheTop()
 			}
@@ -25,7 +25,7 @@ func AutoSetCacheTop() {
 			select {
 			case <-ticker.C:
 				blog.ReflexCache()
-				color.Yellow("Updated Feed Cache")
+				color.Yellow("[Svc] Updated Feed Cache")
 			case <-quit:
 				ticker.Stop()
 				return
@@ -35,6 +35,7 @@ func AutoSetCacheTop() {
 	}()
 }
 
+// Service to generate a backup at a certain time.
 func ImagebackupService() {
 	ticker := time.NewTicker(168 * time.Hour)
 	quit := make(chan struct{})
@@ -42,8 +43,8 @@ func ImagebackupService() {
 		for {
 			select {
 			case <-ticker.C:
-				backup.GenerateCompress()
-				color.Green("backup has been successfully created :" + (time.Now()).String())
+				backup.GenerateBackup("./Serverfiles")
+				color.Green("[Svc] backup has been successfully created :" + (time.Now()).String())
 			case <-quit:
 				ticker.Stop()
 				return
