@@ -6,7 +6,7 @@ const (
 	FileTypeJPG = "image/jpeg"
 )
 
-// /  validated if image by mime
+// validated if image by mime
 func IsImageMIME(MIME string) bool {
 	for _, v := range []string{FileTypeGif, FileTypePNG, FileTypeJPG} {
 		if MIME == v {

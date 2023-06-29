@@ -137,7 +137,7 @@ func (v *PostController) Post(c *gin.Context) {
 	}
 	_, err = security.VerifyToken((c.Request))
 	if result.Password != "" && result.Password != c.Query("Hash") && err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Status": "Unauthorized"})
 		return
 	}
 	go v.Conf.Addviews(PostID)
