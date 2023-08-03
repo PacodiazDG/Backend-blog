@@ -10,6 +10,10 @@ import (
 // writes errors to a file depending on their severity
 func WriteLogs(errors error, severity int) {
 	s := errors.Error()
+	if os.Getenv("PreferErrPanic") == "true" {
+		panic(errors)
+		return
+	}
 	f, err := os.OpenFile("./error.log",
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {

@@ -55,14 +55,14 @@ func (v *PostController) FindPost(c *gin.Context) {
 		visibility = false
 	}
 	query = bson.M{"Title": bson.M{"$regex": primitive.Regex{
-		Pattern: ".*" + search + ".*", Options: "gi"}},
+		Pattern: ".*" + search + ".*", Options: "i"}},
 		"Visible": visibility, "Password": ""}
 	Feed1, err := v.Conf.GetFeed(next, query, DefaultLimit)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Internal Server Error"})
 		return
 	}
-	query = bson.M{"Description": bson.M{"$regex": primitive.Regex{Pattern: ".*" + search + ".*", Options: "gi"}},
+	query = bson.M{"Description": bson.M{"$regex": primitive.Regex{Pattern: ".*" + search + ".*", Options: "i"}},
 		"Visible": visibility, "Password": ""}
 	Feed2, err := v.Conf.GetFeed(next, query, DefaultLimit)
 	if err != nil {
