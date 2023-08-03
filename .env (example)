@@ -65,3 +65,6 @@ Storage=true
 
 # Google site verification key
 GoogleSite_Verification=
+
+# enable err panic
+PreferErrPanic=flase
