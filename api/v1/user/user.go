@@ -10,10 +10,10 @@ import (
 	"time"
 
 	logs "github.com/PacodiazDG/Backend-blog/components/logs"
+	"github.com/PacodiazDG/Backend-blog/components/security"
+	"github.com/PacodiazDG/Backend-blog/components/validation"
 	database "github.com/PacodiazDG/Backend-blog/database"
 	"github.com/PacodiazDG/Backend-blog/extensions/redisbackend"
-	"github.com/PacodiazDG/Backend-blog/modules/security"
-	"github.com/PacodiazDG/Backend-blog/modules/validation"
 	"github.com/PacodiazDG/Backend-blog/smtpm"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"

@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/PacodiazDG/Backend-blog/components/logs"
-	"github.com/PacodiazDG/Backend-blog/modules/security"
-	"github.com/PacodiazDG/Backend-blog/modules/validation"
+	"github.com/PacodiazDG/Backend-blog/components/security"
+	"github.com/PacodiazDG/Backend-blog/components/validation"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
