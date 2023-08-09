@@ -268,7 +268,7 @@ func CheckToken(c *gin.Context) {
 
 func DelateSession(c *gin.Context) {
 	uuID := c.Param("token")
-	if primitive.IsValidObjectID(uuID) {
+	if _, err := primitive.ObjectIDFromHex(uuID); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "ObjectID not valid"})
 		return
 	}
