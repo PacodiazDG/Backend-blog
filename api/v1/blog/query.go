@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/PacodiazDG/Backend-blog/components/logs"
 	"github.com/PacodiazDG/Backend-blog/database"
-	"github.com/PacodiazDG/Backend-blog/modules/logs"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

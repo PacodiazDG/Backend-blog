@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
+	logs "github.com/PacodiazDG/Backend-blog/components/logs"
 	database "github.com/PacodiazDG/Backend-blog/database"
 	"github.com/PacodiazDG/Backend-blog/extensions/redisbackend"
-	logs "github.com/PacodiazDG/Backend-blog/modules/logs"
 	"github.com/PacodiazDG/Backend-blog/modules/security"
 	"github.com/PacodiazDG/Backend-blog/modules/validation"
 	"github.com/PacodiazDG/Backend-blog/smtpm"

@@ -6,8 +6,8 @@ import (
 
 	"github.com/PacodiazDG/Backend-blog/api/v1/blog"
 	"github.com/PacodiazDG/Backend-blog/api/v1/user"
+	logs "github.com/PacodiazDG/Backend-blog/components/logs"
 	"github.com/PacodiazDG/Backend-blog/extensions/redisbackend"
-	logs "github.com/PacodiazDG/Backend-blog/modules/logs"
 	"github.com/PacodiazDG/Backend-blog/modules/security"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"

@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/PacodiazDG/Backend-blog/modules/logs"
+	"github.com/PacodiazDG/Backend-blog/components/logs"
 	"github.com/go-redis/redis"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

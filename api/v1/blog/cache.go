@@ -1,8 +1,8 @@
 package blog
 
 import (
+	logs "github.com/PacodiazDG/Backend-blog/components/logs"
 	"github.com/PacodiazDG/Backend-blog/extensions/redisbackend"
-	logs "github.com/PacodiazDG/Backend-blog/modules/logs"
 )
 
 type Top50 struct {
