@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"strconv"
 
-	logs "github.com/PacodiazDG/Backend-blog/modules/logs"
+	logs "github.com/PacodiazDG/Backend-blog/components/logs"
 	"github.com/gin-gonic/gin"
 	"github.com/nfnt/resize"
 )

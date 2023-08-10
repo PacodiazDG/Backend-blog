@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/PacodiazDG/Backend-blog/modules/filter"
-	"github.com/PacodiazDG/Backend-blog/modules/security"
+	"github.com/PacodiazDG/Backend-blog/components/filter"
+	"github.com/PacodiazDG/Backend-blog/components/security"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"

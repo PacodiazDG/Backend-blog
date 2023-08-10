@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/PacodiazDG/Backend-blog/modules/logs"
+	"github.com/PacodiazDG/Backend-blog/components/logs"
 	"github.com/go-redis/redis"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -27,13 +27,11 @@ func Initdb() {
 // Creates the connection to mongoDB and returns it in a pointer (*mongo.Client)
 func newConnection() (*mongo.Client, error) {
 	dbConfig := os.Getenv("DB_CONFIG")
-	client, err := mongo.NewClient(options.Client().ApplyURI(dbConfig))
-	if err != nil {
-		panic(err)
-	}
+	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	opts := options.Client().ApplyURI(dbConfig).SetServerAPIOptions(serverAPI)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	err = client.Connect(ctx)
+	client, err := mongo.Connect(context.Background(), opts)
 	if err != nil {
 		panic(err)
 	}

@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	"github.com/PacodiazDG/Backend-blog/api/router"
+	"github.com/PacodiazDG/Backend-blog/components/configinit"
+	"github.com/PacodiazDG/Backend-blog/components/validation"
 	Middlewares "github.com/PacodiazDG/Backend-blog/middlewares"
-	"github.com/PacodiazDG/Backend-blog/modules/configinit"
-	"github.com/PacodiazDG/Backend-blog/modules/validation"
 	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
 )

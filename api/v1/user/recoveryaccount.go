@@ -8,9 +8,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/PacodiazDG/Backend-blog/components/security"
+	"github.com/PacodiazDG/Backend-blog/components/validation"
 	database "github.com/PacodiazDG/Backend-blog/database"
-	"github.com/PacodiazDG/Backend-blog/modules/security"
-	"github.com/PacodiazDG/Backend-blog/modules/validation"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 )

@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/PacodiazDG/Backend-blog/api/v1/blog"
-	"github.com/PacodiazDG/Backend-blog/modules/backup"
-	"github.com/PacodiazDG/Backend-blog/modules/logs"
+	"github.com/PacodiazDG/Backend-blog/components/backup"
+	"github.com/PacodiazDG/Backend-blog/components/logs"
 	"github.com/fatih/color"
 )
 

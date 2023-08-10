@@ -6,8 +6,8 @@ import (
 	"regexp"
 
 	"github.com/PacodiazDG/Backend-blog/api/v1/user"
+	logs "github.com/PacodiazDG/Backend-blog/components/logs"
 	database "github.com/PacodiazDG/Backend-blog/database"
-	logs "github.com/PacodiazDG/Backend-blog/modules/logs"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"gopkg.in/mgo.v2/bson"
 )

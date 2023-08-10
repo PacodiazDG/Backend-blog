@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/PacodiazDG/Backend-blog/api/v1/blog"
-	"github.com/PacodiazDG/Backend-blog/modules/security"
+	"github.com/PacodiazDG/Backend-blog/components/security"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )

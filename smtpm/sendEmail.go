@@ -5,8 +5,8 @@ import (
 	"net/smtp"
 	"os"
 
-	"github.com/PacodiazDG/Backend-blog/modules/logs"
-	"github.com/PacodiazDG/Backend-blog/modules/validation"
+	"github.com/PacodiazDG/Backend-blog/components/logs"
+	"github.com/PacodiazDG/Backend-blog/components/validation"
 )
 
 // Verify that the mailing list is valid.

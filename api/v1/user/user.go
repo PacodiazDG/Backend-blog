@@ -9,11 +9,11 @@ import (
 	"strings"
 	"time"
 
+	logs "github.com/PacodiazDG/Backend-blog/components/logs"
+	"github.com/PacodiazDG/Backend-blog/components/security"
+	"github.com/PacodiazDG/Backend-blog/components/validation"
 	database "github.com/PacodiazDG/Backend-blog/database"
 	"github.com/PacodiazDG/Backend-blog/extensions/redisbackend"
-	logs "github.com/PacodiazDG/Backend-blog/modules/logs"
-	"github.com/PacodiazDG/Backend-blog/modules/security"
-	"github.com/PacodiazDG/Backend-blog/modules/validation"
 	"github.com/PacodiazDG/Backend-blog/smtpm"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
@@ -92,7 +92,6 @@ func Login(c *gin.Context) {
 		return
 	}
 	smtpm.Send([]string{u.Email}, "Your account was accessed from a new IP address", tpl.String())
-	// security.BanedToken(token)
 	c.JSON(http.StatusOK, gin.H{"Token": "Bearer " + token})
 }
 
@@ -268,7 +267,7 @@ func CheckToken(c *gin.Context) {
 
 func DelateSession(c *gin.Context) {
 	uuID := c.Param("token")
-	if primitive.IsValidObjectID(uuID) {
+	if _, err := primitive.ObjectIDFromHex(uuID); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "ObjectID not valid"})
 		return
 	}

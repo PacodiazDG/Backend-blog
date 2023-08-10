@@ -5,7 +5,7 @@
 
 # Requirements
 - Go 1.19 or higher.
-- MongoDB 3.6 and higher.
+- MongoDB 6.0 and higher.
 - RedisDB 7.0 and higher.
 
 # Installation 
