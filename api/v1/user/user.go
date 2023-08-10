@@ -92,7 +92,6 @@ func Login(c *gin.Context) {
 		return
 	}
 	smtpm.Send([]string{u.Email}, "Your account was accessed from a new IP address", tpl.String())
-	// security.BanedToken(token)
 	c.JSON(http.StatusOK, gin.H{"Token": "Bearer " + token})
 }
 
