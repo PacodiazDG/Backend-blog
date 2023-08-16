@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/PacodiazDG/Backend-blog/api/v1/blog"
 	database "github.com/PacodiazDG/Backend-blog/database"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -82,4 +83,17 @@ func GetIpaddes(Userid primitive.ObjectID) ([]IpAddrUser, error) {
 		return nil, errors.New("error in database")
 	}
 	return ipaddress, nil
+}
+
+func GetPublications(UserID string, Next int) ([]blog.FeedStrcture, error) {
+	var MyPublications []blog.FeedStrcture
+	collection := *database.Database.Collection("Post")
+	result, err := collection.Find(context.Background(), bson.M{"Author": ID})
+	if err != nil {
+		return nil, errors.New("error in database")
+	}
+	if err = result.All(context.Background(), &MyPublications); err != nil {
+		return nil, errors.New("error in database")
+	}
+	return MyPublications, nil
 }
