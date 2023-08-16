@@ -330,7 +330,7 @@ func TokenRenewal(c *gin.Context) {
 func SearchMyPublications(c *gin.Context) {
 	Next, err := strconv.Atoi(c.Query("next"))
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Status": "Token not valid"})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Status": "Token not valid"})
 		return
 	}
 	jwtinfo, err := security.GetinfoToken(security.ExtractToken(c.Request))
@@ -340,7 +340,7 @@ func SearchMyPublications(c *gin.Context) {
 	}
 	Publications, err := GetPublications(jwtinfo["Userid"].(string), Next)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Status": "Token not valid"})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Status": "Token not valid"})
 		return
 	}
 	c.AbortWithStatusJSON(http.StatusOK, gin.H{"Post": Publications})
