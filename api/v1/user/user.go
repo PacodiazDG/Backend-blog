@@ -327,6 +327,7 @@ func TokenRenewal(c *gin.Context) {
 	c.AbortWithStatusJSON(http.StatusOK, gin.H{"Token": "Bearer " + token})
 }
 
+// Search for the user’s posts.
 func SearchMyPublications(c *gin.Context) {
 	Next, err := strconv.Atoi(c.Query("next"))
 	if err != nil {
