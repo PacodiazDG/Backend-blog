@@ -27,7 +27,10 @@ func main() {
 	if validation.FileExists(PemFile) && validation.FileExists(KeyFile) {
 		Server.RunTLS(lisent, PemFile, KeyFile)
 	} else {
-		color.Red("[Error] Files Not found  \n Status of PemFile: " + strconv.FormatBool(validation.FileExists(PemFile)) + "\n Status of KeyFile: " + strconv.FormatBool(validation.FileExists(KeyFile)))
+		color.Red("[Error] Files Not found  \n Status of PemFile: " +
+			strconv.FormatBool(validation.FileExists(PemFile)) +
+			"\n Status of KeyFile: " +
+			strconv.FormatBool(validation.FileExists(KeyFile)))
 		color.Yellow("[Warning] The server is working without SSL")
 		Server.Run(lisent)
 	}
