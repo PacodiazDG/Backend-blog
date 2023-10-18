@@ -150,3 +150,5 @@ error.log
 serverfiles
 /www-data/*
 *.zip
+
+/Script
