@@ -16,7 +16,7 @@ import (
 
 // Generates a map (sitemapindex) with "sitemap" directions
 func siteMapLoc(CountDoc int64) string {
-	Meta := "<sitemapindex xmlns=\"http://www.google.com/schemas/sitemap/0.84\">\n"
+	Meta := "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
 	for i := int64(0); i < CountDoc/10+1; i++ {
 		Meta += "<sitemap><loc>" + os.Getenv("Siteurl") + "sitemap.xml?next=" + strconv.FormatInt(i*10, 10) + "</loc></sitemap>"
 	}
