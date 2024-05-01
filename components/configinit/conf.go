@@ -72,4 +72,5 @@ func Conf() {
 	blog.SetLastStories()
 	services.AutoSetCacheTop()
 	services.ImagebackupService()
+	services.RedistestConection()
 }
