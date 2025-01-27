@@ -152,3 +152,4 @@ serverfiles
 *.zip
 
 /Script
+/temp

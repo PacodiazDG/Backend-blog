@@ -25,7 +25,9 @@ func BackendRouter(router *gin.Engine) {
 	router.HEAD("/ping", func(c *gin.Context) {
 		c.Status(http.StatusOK)
 	})
-
+	router.GET("/favicon.ico", func(ctx *gin.Context) {
+		ctx.File("./www-data/favicon.ico")
+	})
 	v1 := router.Group("/v1")
 	{
 		v1.Use(Middlewares.ApiInfo)
