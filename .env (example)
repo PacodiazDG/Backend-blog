@@ -54,7 +54,7 @@ Rsecret=
 Pages=false
 
 # Content Security Policy (CSP)
-ContentSecurityPolicy=
+ContentSecurityPolicy=*
 
 # Site Details
 SiteMetaTitle=Site Title
